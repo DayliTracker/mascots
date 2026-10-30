@@ -63,9 +63,18 @@ docs/mascots/<animal>/
 
 ## Pitfalls
 
+- Capture screenshots to `/tmp` and COPY them into `docs/mascots/<animal>/qa/`
+  afterwards — writing new files inside the project while Metro watches it can
+  trigger a dev reload mid-QA, which resets app state and eats taps (symptom:
+  a blue "Refreshing…" banner and counters that don't add up).
+- Space taps ≥0.8s apart and re-screenshot to verify each counter before the
+  next state; a missed tap makes the state capture worthless.
 - Two checkouts of an app (e.g. a worktree) installing the same bundle id
   fight over the simulator — last `expo run:ios` install wins. Rebuild from
   the repo you think you're testing.
 - `expo run:ios` stays alive after launch (it is not hung); pipe its output
   to a file, not through `tail`, or you'll see nothing until it exits.
 - Screenshot latency is ~300–500ms; the surprised state may need retries.
+- Metro asset `require()` paths must be literal strings (no template
+  literals) and are relative to the importing file — `components/pets.ts`
+  uses `../assets/mascots/<animal>/...`.
