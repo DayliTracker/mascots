@@ -1,0 +1,5 @@
+{
+  "name": "mascots",
+  "version": "0.1.0",
+  "description": "Original animated pixel-art mascots: /mascot [animal] designs a pack, generates sprite frames with a zero-dependency engine, and screenshot-verifies every state in the simulator."
+}
