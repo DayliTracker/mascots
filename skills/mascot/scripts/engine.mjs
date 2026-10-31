@@ -43,6 +43,48 @@ export function hexToRgba(hex, a = 255) {
   ];
 }
 
+// Style tokens — the shared 48px-class look, measured from reference art
+// (references/style-guide.md). Shadows bias warm: the blue channel drops
+// fastest, which is what the measured −13° hue shift toward red looks like in
+// RGB. Outlines lerp toward a dark warm anchor so every part silhouettes in
+// the same brown family, lighter over light fills.
+//
+// Packs opt in by calling shadeTones() at module load and assigning the
+// results to single-char palette keys (canvas cells hold one char each), e.g.
+//
+//   const S = shadeTones(P.b);   // { soft, deep, hi, out }
+//   palette: { b: P.b, t: S.soft, s: S.deep, H: S.hi, O: S.out, ... }
+//
+// and setting pack.style for the engine-level passes:
+//
+//   style: {
+//     outline: 'selective',       // silhouette outline tinted per fill key
+//     outlineFor: { b: 'O', y: 'Q' },   // fill char → outline char
+//     groundShadow: { rxScale: 1.2, rows: 2 },  // paints palette key 'g'
+//   }
+const SHADOW_SOFT = [0.95, 0.9, 0.84];
+const SHADOW_DEEP = [0.86, 0.76, 0.62];
+const OUTLINE_ANCHOR = '#301812';
+
+export function shadeTones(
+  hex,
+  { softF = SHADOW_SOFT, deepF = SHADOW_DEEP, hiT = 0.22, outT = 0.82, anchor = OUTLINE_ANCHOR } = {}
+) {
+  const [r, g, b] = hexToRgba(hex);
+  const hex2 = (v) => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0');
+  const mul = (f) => `#${hex2(r * f[0])}${hex2(g * f[1])}${hex2(b * f[2])}`;
+  const mix = (other, t) =>
+    `#${[r, g, b]
+      .map((v, i) => hex2(v * (1 - t) + parseInt(other.slice(1 + i * 2, 3 + i * 2), 16) * t))
+      .join('')}`;
+  return {
+    soft: mul(softF),
+    deep: mul(deepF),
+    hi: mix('#FFFFFF', hiT),
+    out: mix(anchor, outT),
+  };
+}
+
 // --- canvas + composition helpers -------------------------------------------
 
 export function blank(grid) {
@@ -87,23 +129,43 @@ export function paintBody(canvas, { cx, cy, ry, rx }, { lowStart = 0.42, lowDeep
   }
 }
 
-// 1px silhouette outline in palette key `color`. Runs last: wraps every part,
-// including any that break the body silhouette (ears, wings, feet).
-export function outline(canvas, color = 'o') {
+// 1px silhouette outline. `opts.selective(key)` returns the outline palette key
+// for a fill key (falls back to `color`); `opts.skip` lists keys the outline
+// must not wrap or grow around (the ground shadow). Runs last: wraps every
+// part, including any that break the body silhouette (ears, wings, feet).
+export function outline(canvas, color = 'o', { skip = null, selective = null } = {}) {
   const grid = canvas.length;
   const result = canvas.map((row) => [...row]);
-  const filledAt = (r, c) =>
-    r >= 0 && r < grid && c >= 0 && c < grid && canvas[r][c] !== '.';
+  const keyAt = (r, c) =>
+    r >= 0 && r < grid && c >= 0 && c < grid ? canvas[r][c] : '.';
+  const filledAt = (r, c) => {
+    const k = keyAt(r, c);
+    return k !== '.' && (!skip || !skip.has(k));
+  };
   for (let r = 0; r < grid; r++) {
     for (let c = 0; c < grid; c++) {
       if (canvas[r][c] !== '.') continue;
       let touches = false;
-      for (let dr = -1; dr <= 1 && !touches; dr++) {
-        for (let dc = -1; dc <= 1 && !touches; dc++) {
-          if ((dr || dc) && filledAt(r + dr, c + dc)) touches = true;
+      const counts = new Map();
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          if (!(dr || dc)) continue;
+          const k = keyAt(r + dr, c + dc);
+          if (k === '.' || (skip && skip.has(k))) continue;
+          touches = true;
+          if (selective) counts.set(k, (counts.get(k) ?? 0) + 1);
         }
       }
-      if (touches) result[r][c] = color;
+      if (!touches) continue;
+      if (selective) {
+        let best = null, bestN = 0;
+        for (const [k, n] of counts) {
+          if (n > bestN) { best = k; bestN = n; }
+        }
+        result[r][c] = selective(best) ?? color;
+      } else {
+        result[r][c] = color;
+      }
     }
   }
   return result;
@@ -207,6 +269,31 @@ export function contactSheet(frames, particles, palette, { scale = 8, bg = '#FAF
   return encodePNG(sheet, cell * cols, cell);
 }
 
+// Solid ground shadow: an ellipse under the lowest filled row, shrinking over
+// `rows` rows. Uses the `g` palette key (pre-blended against the app canvas —
+// see style tokens). Never overwrites body pixels.
+function stampGroundShadow(canvas, pack, style) {
+  const grid = canvas.length;
+  let gy0 = -1;
+  for (let r = grid - 1; r >= 0 && gy0 < 0; r--) {
+    for (let c = 0; c < grid; c++) {
+      if (canvas[r][c] !== '.') { gy0 = r; break; }
+    }
+  }
+  if (gy0 < 0) return canvas;
+  const rows = style.groundShadow.rows ?? 2;
+  const rx = pack.rx * (style.groundShadow.rxScale ?? 1.15);
+  for (let i = 1; i <= rows; i++) {
+    const r = gy0 + i;
+    if (r >= grid) break;
+    const w = rx * (1 - (i - 0.5) / (rows + 0.5));
+    for (let c = Math.round(pack.cx - w); c <= Math.round(pack.cx + w); c++) {
+      if (c >= 0 && c < grid && canvas[r][c] === '.') canvas[r][c] = 'g';
+    }
+  }
+  return canvas;
+}
+
 // --- pack runner --------------------------------------------------------------
 
 export async function renderPack(packPath, { out } = {}) {
@@ -216,11 +303,22 @@ export async function renderPack(packPath, { out } = {}) {
   const palette = Object.fromEntries(
     Object.entries(pack.palette).map(([k, v]) => [k, hexToRgba(v)])
   );
+  const style = pack.style ?? null;
+  const outlineOpts = style
+    ? {
+        selective:
+          style.outline === 'selective'
+            ? (k) => style.outlineFor?.[k] ?? null
+            : null,
+        skip: style.groundShadow ? new Set(['g']) : null,
+      }
+    : {};
 
   const maps = {};
   for (const [frameName, opts] of Object.entries(pack.frames)) {
     const canvas = pack.compose({ ...helpers, grid: pack.grid }, opts ?? {}, pack);
-    maps[frameName] = outline(canvas, pack.outlineKey ?? 'o');
+    if (style?.groundShadow) stampGroundShadow(canvas, pack, style);
+    maps[frameName] = outline(canvas, pack.outlineKey ?? 'o', outlineOpts);
   }
 
   mkdirSync(outDir, { recursive: true });
