@@ -1,0 +1,27 @@
+name: validate packs
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: render twice + validate every pack (determinism, palette lock, registration)
+        run: |
+          set -e
+          for pack in skills/mascot/scripts/packs/*.mjs; do
+            name=$(basename "$pack" .mjs)
+            echo "== $name"
+            node skills/mascot/scripts/engine.mjs "$pack" --out "/tmp/$name-a"
+            node skills/mascot/scripts/engine.mjs "$pack" --out "/tmp/$name-b"
+            diff -rq "/tmp/$name-a" "/tmp/$name-b"
+            node skills/mascot/scripts/validate-frames.mjs "$pack" --out "/tmp/$name-a"
+          done
+      - name: guard the 25px duck baseline (contact sheet must not drift)
+        run: cmp /tmp/duck-a/contact_sheet.png docs/demo/duck-contact-sheet.png
