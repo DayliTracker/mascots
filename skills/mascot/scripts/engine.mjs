@@ -1,6 +1,6 @@
 // mascots engine — pixel-map sprite frames → PNG, zero dependencies.
 //
-//   node engine.mjs <pack.mjs> [--out <dir>] [--seed <n>]
+//   node engine.mjs <pack.mjs> [--out <dir>]
 //
 // A pack is an ES module default-exporting:
 //   {
@@ -9,15 +9,16 @@
 //     particleScale, sheetScale, sheetBg,
 //     particles: { <name>: string[] },            // small pixel maps
 //     frames: { <frameName>: object },            // opts passed to pack.compose
-//     compose(c, frameOpts, helpers): string[][]  // paints the body + parts (unoutlined)
+//     compose(c, frameOpts, pack): string[][]     // paints the body + parts (unoutlined)
 //   }
 // The engine applies the outline pass, renders each frame to <name>_<frame>.png,
-// particles to particle_<name>.png, and a contact_sheet.png for review.
+// particles to particle_<name>.png, writes manifest.json (file map for the
+// app's animator), and a contact_sheet.png for review.
 
-import { deflateSync, crc32 } from 'node:zlib';
+import { deflateSync } from 'node:zlib';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 // --- deterministic RNG (mulberry32). Packs may use it for jitter; the same
 // seed must always produce identical output.
@@ -112,6 +113,20 @@ export const helpers = { blank, stamp, bodyMask, paintBody, outline, makeRng };
 
 // --- PNG encoder -------------------------------------------------------------
 
+// CRC-32 (IEEE), table-driven — same values as zlib.crc32, inlined so the
+// engine keeps its zero-dependency promise on any Node version.
+const CRC_TABLE = new Int32Array(256).map((_, n) => {
+  let c = n;
+  for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+  return c;
+});
+
+function crc32(buf) {
+  let c = -1;
+  for (let i = 0; i < buf.length; i++) c = CRC_TABLE[(c ^ buf[i]) & 0xff] ^ (c >>> 8);
+  return (c ^ -1) >>> 0;
+}
+
 function chunk(type, data) {
   const len = Buffer.alloc(4);
   len.writeUInt32BE(data.length);
@@ -194,7 +209,7 @@ export function contactSheet(frames, particles, palette, { scale = 8, bg = '#FAF
 
 // --- pack runner --------------------------------------------------------------
 
-export async function renderPack(packPath, { out, seed } = {}) {
+export async function renderPack(packPath, { out } = {}) {
   const mod = await import(pathToFileURL(resolve(packPath)).href);
   const pack = mod.default;
   const outDir = resolve(out ?? dirname(resolve(packPath)));
@@ -229,11 +244,25 @@ export async function renderPack(packPath, { out, seed } = {}) {
     })
   );
   written.push(sheet);
+  const manifest = {
+    name: pack.name,
+    grid: pack.grid,
+    scale: pack.scale,
+    frames: Object.fromEntries(
+      Object.keys(pack.frames).map((k) => [k, `${pack.name}_${k}.png`])
+    ),
+    particles: Object.fromEntries(
+      Object.keys(pack.particles ?? {}).map((k) => [k, `particle_${k}.png`])
+    ),
+  };
+  const manifestFile = join(outDir, 'manifest.json');
+  writeFileSync(manifestFile, `${JSON.stringify(manifest, null, 2)}\n`);
+  written.push(manifestFile);
   return { pack, outDir, frames: maps, written };
 }
 
-// CLI entry: node engine.mjs <pack.mjs> [--out dir] [--seed n]
-if (process.argv[1] && resolve(process.argv[1]) === import.meta.url.replace('file://', '')) {
+// CLI entry: node engine.mjs <pack.mjs> [--out dir]
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const args = process.argv.slice(2);
   const packPath = args.find((a) => !a.startsWith('--'));
   const get = (flag) => {
@@ -241,10 +270,10 @@ if (process.argv[1] && resolve(process.argv[1]) === import.meta.url.replace('fil
     return i >= 0 ? args[i + 1] : undefined;
   };
   if (!packPath) {
-    console.error('usage: node engine.mjs <pack.mjs> [--out dir] [--seed n]');
+    console.error('usage: node engine.mjs <pack.mjs> [--out dir]');
     process.exit(2);
   }
-  renderPack(packPath, { out: get('--out'), seed: Number(get('--seed') ?? 0) }).then(
+  renderPack(packPath, { out: get('--out') }).then(
     (r) => console.log(`Wrote ${r.written.length} files to ${r.outDir}`),
     (e) => {
       console.error(e);

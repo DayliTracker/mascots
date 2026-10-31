@@ -30,14 +30,14 @@ pixel art instead of "blocky".
   should descend monotonically (4-3-2-1), the engine's ellipse gives this.
 - Scale output only in integer multiples (the engine does this via `scale`).
 
-## Frame/timing table (bake into the component defaults)
+## Frame/timing table (bake into the animator defaults)
 
 | State | Frames | Timing | Notes |
 |---|---|---|---|
 | idle breathe | 2–3 | hold 400–700ms (loop ~2.2s) | transform bob, not extra frames |
 | blink | 2 | 150ms, random every 2.6–4.8s | lid line only; never a fixed loop |
 | look | 2 | 700ms, random every 6–10s | eyes shift 1px |
-| walk | 2 (+bob/tilt) | swap 180ms; bob 200/180ms; tilt ±4° at 190ms | 4-frame loop standard for chibi; walk frame 1 = idle pose |
+| walk | 2 (+bob/tilt) | swap 180ms; bob 200/180ms; tilt ±4° at 190ms | 4-frame loop standard for chibi; walk frames = idle pose ± one foot |
 | celebrate | 1 + transforms | hop 260/230ms, squash 90ms, settle 220ms elastic | anticipation = the hop's wind-up dip (bob +3 before launch) |
 | surprised | 1 | 550ms hold | ring eyes + open mouth |
 | particles | 1 sprite | 750–1700ms, alpha in/out | heart on poke; 5 staggered stars on celebrate |
@@ -45,7 +45,7 @@ pixel art instead of "blocky".
 Playback target: 8–12 fps effective (each frame held 80–125ms) on a 60fps
 render loop. Fewer frames need LONGER holds to keep pace.
 
-## Transform rules (the component's half)
+## Transform rules (the animator's half)
 
 - Poses = frame swaps. Soft dynamics = transforms. Never draw motion into
   frames that transforms already cover (bob, tilt, squash).

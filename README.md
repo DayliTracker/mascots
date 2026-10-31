@@ -1,11 +1,12 @@
 # mascots
 
 Animated pixel-art mascots for agent-built apps. This repo provides the
-**`/mascot` skill**: point it at any React Native/Expo app and an animal, and
-it designs an original pixel mascot (pixel maps — no image-gen AI), generates
-sprite frames with a zero-dependency engine, animates it with a drop-in
-`PixelPet` component (idle · blink · glance · waddle · celebrate · poke), and
-verifies every state with simulator screenshots before calling it done.
+**`/mascot` skill**: point it at any app and an animal, and it designs an
+original pixel mascot (pixel maps — no image-gen AI) and generates verified
+sprite frames with a zero-dependency engine — idle · blink · glance · waddle ·
+celebrate · poke. The frames ship with a `manifest.json`; your app animates
+them with its own primitives (a reference React Native animator lives in
+[`examples/react-native/`](examples/react-native/)).
 
 <p>
   <img src="docs/demo/duck-contact-sheet.png" width="620" alt="Duck frames: idle, blink, look, walk, happy, surprised, particles">
@@ -43,11 +44,11 @@ npx skills add DayliTracker/mascots
 /mascot cat        # skips the animal question
 ```
 
-The skill interviews you (animal, name, overrides), vendors the engine +
-`PixelPet` into your app, designs the pack, and holds three gates before
-declaring done: **art** (you approve the contact sheet), **motion** (validator
-PASS + inline animation preview), **device** (per-state simulator screenshots
-committed under `docs/mascots/<animal>/qa/`).
+The skill interviews you (animal, name, overrides), vendors the engine into
+your app, designs the pack, and holds three gates before declaring done:
+**art** (you approve the contact sheet), **motion** (validator PASS + inline
+animation preview), **app** (animator wired up in the app's own framework;
+per-state screenshots committed under `docs/mascots/<animal>/qa/`).
 
 ## Repo layout
 
@@ -58,7 +59,9 @@ skills/mascot/            # the skill (SKILL.md + references + engine scripts)
 ├── scripts/packs/duck.mjs        # reference pack — copy its shape for new animals
 ├── references/           # pipeline, animal recipes, craft, QA protocol, integration
 └── assets/palettes.json  # DB16 / DB32 / Endesga 32 / Resurrect 64 / cozy
-react-native/PixelPet.tsx # the animator (core Animated, no extra deps)
+examples/react-native/    # PixelPet.tsx — reference animator for React Native
+                          # apps; NOT installed with the skill (it ships frames
+                          # + manifest; your app animates them)
 ```
 
 ## Craft sources

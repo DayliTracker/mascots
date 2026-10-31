@@ -21,7 +21,6 @@ const P = {
 const EYE = {
   open: ['Wee', 'eee', 'eee'],
   blink: ['ooo'],
-  side: ['Wee', 'eee', 'eee'],
   wide: ['.oo.', 'o..o', 'o..o', '.oo.'],
   happy: ['e.e', '.e.'],
 };
@@ -32,7 +31,7 @@ const BEAK = {
   smile: ['y...y', 'yyyyy', 'YYYYY'],
 };
 
-const FEET = { stand: ['.yy.', '.Yy.'], step: ['.yy.', '.Yy.'] };
+const FEET = { stand: ['.yy.', '.Yy.'] };
 
 export default {
   name: 'duck',
@@ -81,11 +80,11 @@ export default {
 
     // feet
     if (opts.feet === 'walkA') {
-      stamp(canvas, FEET.step, 21, cx - 6); // left foot forward/down
-      stamp(canvas, FEET.step, 20, cx + 1);
+      stamp(canvas, FEET.stand, 21, cx - 6); // left foot forward/down
+      stamp(canvas, FEET.stand, 20, cx + 1);
     } else if (opts.feet === 'walkB') {
-      stamp(canvas, FEET.step, 20, cx - 5);
-      stamp(canvas, FEET.step, 21, cx + 1); // right foot forward/down
+      stamp(canvas, FEET.stand, 20, cx - 5);
+      stamp(canvas, FEET.stand, 21, cx + 1); // right foot forward/down
     } else {
       stamp(canvas, FEET.stand, 20, cx - 5);
       stamp(canvas, FEET.stand, 20, cx + 1);

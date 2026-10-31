@@ -24,11 +24,16 @@ enough?" — and WAIT. Ship nothing until the verdict.
 
 - `node scripts/mascots/validate-frames.mjs ...` must PASS (paste the output).
 - Build an inline HTML preview: embed the pack's pixel maps in a canvas, port
-  the component's timings (idle bob 2.2s, blink random, walk 180ms swap ±4°
+  the craft.md timings (idle bob 2.2s, blink random, walk 180ms swap ±4°
   tilt, celebrate hop+squash, poke 550ms) and let the user click through
-  states. Timing changes go into BOTH the preview and the component.
+  states. Timing changes go into BOTH the preview and the app's animator.
 
-## Gate 3 — device (iOS simulator protocol)
+## Gate 3 — in-app verification (example: React Native / iOS simulator)
+
+Build and run the target app, drive every state through its real trigger
+(progress change, poke, goal cross), and capture per-state screenshots. The
+protocol below is the worked example for a React Native/Expo app on the iOS
+simulator; adapt the drive/capture mechanics to the platform.
 
 ```bash
 npm run typecheck            # or tsc --noEmit
@@ -76,5 +81,5 @@ docs/mascots/<animal>/
   to a file, not through `tail`, or you'll see nothing until it exits.
 - Screenshot latency is ~300–500ms; the surprised state may need retries.
 - Metro asset `require()` paths must be literal strings (no template
-  literals) and are relative to the importing file — `components/pets.ts`
-  uses `../assets/mascots/<animal>/...`.
+  literals) and are relative to the importing file — a generated registry
+  (`components/pets.ts`) uses `../assets/mascots/<animal>/...`.

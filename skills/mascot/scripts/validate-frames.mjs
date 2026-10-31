@@ -3,7 +3,7 @@
 //   node validate-frames.mjs <pack.mjs> [--out <dir>]
 //
 // Checks (all must pass, exit 1 otherwise):
-//   1. files: every frame + particle + contact_sheet.png exists
+//   1. files: every frame + particle + manifest.json + contact_sheet.png exists
 //   2. dimensions: frame PNGs are square, exactly grid*scale
 //   3. palette lock: every opaque pixel is a palette color (no drift)
 //   4. silhouette: every frame has a substantial opaque body
@@ -57,6 +57,13 @@ async function main() {
   const args = process.argv.slice(2);
   const packPath = args.find((a) => !a.startsWith('--'));
   const outIdx = args.indexOf('--out');
+  if (
+    !packPath ||
+    (outIdx >= 0 && (outIdx + 1 >= args.length || args[outIdx + 1].startsWith('--')))
+  ) {
+    console.error('usage: node validate-frames.mjs <pack.mjs> [--out <dir>]');
+    process.exit(2);
+  }
   const packMod = await import(pathToFileURL(resolve(packPath)).href);
   const pack = packMod.default;
   const outDir = resolve(outIdx >= 0 ? args[outIdx + 1] : dirname(resolve(packPath)));
@@ -75,6 +82,7 @@ async function main() {
     ...Object.keys(pack.frames).map((f) => `${pack.name}_${f}.png`),
     ...Object.keys(pack.particles ?? {}).map((p) => `particle_${p}.png`),
     'contact_sheet.png',
+    'manifest.json',
   ];
   console.log('files');
   for (const f of expected) {

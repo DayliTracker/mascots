@@ -9,9 +9,10 @@
 │   ├── validate-frames.mjs     # vendored
 │   ├── palettes.json           # vendored
 │   └── packs/<animal>.mjs      # the art — this file IS the mascot
-├── components/PixelPet.tsx     # vendored animator
-├── components/pets.ts          # registry: which packs exist, their frame sources
-├── assets/mascots/<animal>/    # generated PNGs (commit them)
+├── components/…                # animator WRITTEN BY THE AGENT in the app's
+│   │                           # own framework (contract: app-integration.md)
+│   └── pets.ts                 # optional registry for character switchers
+├── assets/mascots/<animal>/    # generated PNGs + manifest.json (commit them)
 └── docs/mascots/<animal>/      # contact sheet + qa/ screenshots (evidence)
 ```
 
@@ -24,7 +25,6 @@ mkdir -p <app>/scripts/mascots/packs <app>/assets/mascots <app>/docs/mascots
 cp "$SKILL_DIR/scripts/engine.mjs"            <app>/scripts/mascots/
 cp "$SKILL_DIR/scripts/validate-frames.mjs"   <app>/scripts/mascots/
 cp "$SKILL_DIR/assets/palettes.json"          <app>/scripts/mascots/
-cp "$(dirname "$SKILL_DIR")/../react-native/PixelPet.tsx" <app>/components/
 ```
 
 If the app already has a `scripts/mascots/engine.mjs`, do NOT overwrite it with
@@ -74,7 +74,7 @@ last (they sit on top of everything).
 ## Engine + validator CLI
 
 ```bash
-# generate frames + particles + contact sheet
+# generate frames + particles + manifest.json + contact sheet
 node scripts/mascots/engine.mjs scripts/mascots/packs/<animal>.mjs \
   --out <app>/assets/mascots/<animal>
 
@@ -83,7 +83,8 @@ node scripts/mascots/validate-frames.mjs scripts/mascots/packs/<animal>.mjs \
   --out <app>/assets/mascots/<animal>
 ```
 
-The validator checks: files exist, frame dimensions = `grid × scale` square,
+The validator checks: files exist (frames, particles, `manifest.json`,
+`contact_sheet.png`), frame dimensions = `grid × scale` square,
 palette lock (every opaque pixel is a pack color), non-empty silhouette, frame
 registration (every frame 80–100% pixel-identical to the base frame — same
 character, but not a duplicate), and determinism (re-render byte-compares).
@@ -94,4 +95,4 @@ character, but not a duplicate), and determinism (re-render byte-compares).
 - Keep `idle` as the FIRST key in `frames` — the validator diffs against it.
 - Commit generated PNGs: the app must build without running the engine.
 - Art scale: frames render at `scale` (default 20). Keep the displayed size
-  near `grid × scale / 3` points so 3x devices show pixels near 1:1.
+  near `grid × scale / 3` logical units so 3x screens show pixels near 1:1.
