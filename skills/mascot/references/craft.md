@@ -5,6 +5,10 @@ Distilled from Derek Yu's pixel-art tutorial, Slynyrd Pixelblogs 1/5/6/8
 these unless the user overrides; they are what makes programmatic art read as
 pixel art instead of "blocky".
 
+Sections through "Transform rules" govern **pixel packs**; "Smooth craft"
+governs **smooth packs** (ADR 0001). The frame/timing table and determinism
+rules apply to both kinds.
+
 ## Palette discipline
 
 - Pick body / shade / soft-shade / accent / outline from ONE palette
@@ -54,6 +58,41 @@ render loop. Fewer frames need LONGER holds to keep pace.
   duck centers the pivot; keep `translateY` compensation on landing.
 - Land a hop with squash + a 2-frame elastic settle; launch with a small dip
   (anticipation) before the jump.
+
+## Smooth craft — SVG authoring (smooth packs)
+
+Smooth packs trade the cell grid for parametric shapes. The validator adapts
+(ADR 0001): no palette lock, no outline pass — the contract is the frame set,
+canvas, and the alpha gate against `silhouette()`. Reference:
+`scripts/packs/smooth-duck.mjs`.
+
+- **One user space**: every frame is inner SVG in the pack's `size × size`
+  canvas (512 on the duck). Draw with `ellipse`, `circle`, and `path` —
+  NEVER `<text>` (font metrics would break byte-identity; the engine also
+  sets `loadSystemFonts: false`).
+- **Hand-authored, parametric**: define named path constants (body, ears,
+  wings, scarf) and compose them per frame from opts — the smooth analog of
+  stamping art rows. The art is code: no image-gen AI, no traced bitmaps.
+- **Silhouette by shape, not outline**: smooth packs have no 1px outline.
+  The character reads through silhouette first, then two-tone shading, then
+  face. Check every frame at thumbnail size — the qa.md vision loop applies
+  as-is (skip the outline item).
+- **Two-tone shading, clipped**: fill the body, then draw soft/deep shade
+  ellipses clipped to the body path (`<clipPath>`), keyed to the same
+  top-left light as pixel packs. No gradients — hard band boundaries read
+  cleaner at app sizes, and gradient meshes rasterize unpredictably.
+- **Eyes last, glints always**: same rule as pixel — eyes sit on top;
+  each eye gets a main glint (and the duck adds a small secondary). Happy
+  and blink are stroke arcs, wide is a ring.
+- **The alpha gate is the outline discipline**: every opaque pixel of every
+  frame must fall inside `silhouette()`. Keep starter shapes inside the body
+  ellipse; when anatomy breaks the body edge (ears, wings, tail, feet),
+  union those shapes into `silhouette()` and inflate the mask with a round
+  stroke (~16px on a 512 canvas ≈ 8px outward pad) so anti-aliased edges
+  stay inside. A stray anti-aliased pixel outside the mask FAILS the gate.
+- **Registration still applies**: every frame must differ from `idle` by
+  ≥200 px (validator check) — move feet, swap eyes, open the mouth; a frame
+  that only re-renders identically fails.
 
 ## Determinism
 
