@@ -1,0 +1,5 @@
+== regression: duck render byte-identity, branch vs origin/main ==
+Wrote 10 files to /private/tmp/qa4-ev-duck-main
+main render exit: 0
+DUCK BYTE-IDENTICAL vs main: all files match
+diff exit: 0

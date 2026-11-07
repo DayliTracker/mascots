@@ -1,0 +1,11 @@
+--- contact sheet dims (sips) vs manifest ---
+/Users/gauwan/Codespaces/mascots/.claude/worktrees/issue-4-qa/docs/super-board/runs/issue-4-qa-v3/render-a/contact_sheet.png
+  pixelWidth: 1751
+  pixelHeight: 281
+manifest sheet: 1751 x 281 -> contact_sheet.png
+
+--- committed docs/demo sheet vs fresh render (byte compare) ---
+af173938d24413dc3ba4d1e5d060804b95f16951accdc09bc4b883720a81c67d  docs/demo/smooth-duck-contact-sheet.png
+af173938d24413dc3ba4d1e5d060804b95f16951accdc09bc4b883720a81c67d  docs/super-board/runs/issue-4-qa-v3/render-a/contact_sheet.png
+cmp: byte-identical
+cmp-exit=0

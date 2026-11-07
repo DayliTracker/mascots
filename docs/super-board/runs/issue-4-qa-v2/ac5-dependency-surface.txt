@@ -1,0 +1,50 @@
+=== AC5: no dependency added to any consuming app — rasterizer is build-time for this repo only ===
+--- root package.json ---
+{
+  "name": "mascots",
+  "private": true,
+  "type": "module",
+  "description": "Animated mascots for agent-built apps — build-time frame pipeline (apps consume PNG frames only)",
+  "scripts": {
+    "smooth-duck": "node skills/mascot/scripts/smooth-engine.mjs skills/mascot/scripts/packs/smooth-duck.mjs",
+    "verify:smooth-duck": "node skills/mascot/scripts/validate-smooth-frames.mjs skills/mascot/scripts/packs/smooth-duck.mjs"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "2.6.2"
+  }
+}
+
+--- 'dependencies' key present? ---
+dependencies key: ABSENT
+devDependencies: {"@resvg/resvg-js":"2.6.2"}
+
+--- package-lock @resvg pin ---
+    "node_modules/@resvg/resvg-js": {
+      "version": "2.6.2",
+      "resolved": "https://registry.npmjs.org/@resvg/resvg-js/-/resvg-js-2.6.2.tgz",
+
+--- package.json anywhere under skills/ or examples/? ---
+none — consuming surfaces add no package.json
+
+--- every @resvg reference in the repo ---
+package.json:11:    "@resvg/resvg-js": "2.6.2"
+docs/super-board/runs/issue-4-qa-v1/REPORT.md:16:| 5 | no consuming-app dependency | `package.json` + repo-wide grep | ✅ `@resvg/resvg-js: "2.6.2"` exact-pinned in `devDependencies` only, `dependencies` key absent; no `package.json` under `skills/` or `examples/`; `@resvg` referenced only by build-time scripts `smooth-engine.mjs` / `validate-smooth-frames.mjs`; shipping pixel scripts import node builtins only (`ac5-dependency-surface.txt`) |
+docs/super-board/runs/issue-4-qa-v2/render-a/manifest.json:55:    "name": "@resvg/resvg-js",
+skills/mascot/references/pipeline.md:100:- Rasterizer: `@resvg/resvg-js`, exact-pinned in the mascots repo's root
+skills/mascot/scripts/smooth-engine.mjs:14:// Frames render through the pinned build-time rasterizer (@resvg/resvg-js,
+skills/mascot/scripts/smooth-engine.mjs:27:import { Resvg } from '@resvg/resvg-js';
+skills/mascot/scripts/smooth-engine.mjs:32:  return require('@resvg/resvg-js/package.json').version;
+skills/mascot/scripts/smooth-engine.mjs:81:    rasterizer: { name: '@resvg/resvg-js', version: rasterizerVersion() },
+docs/super-board/runs/issue-4-qa-v2/render-b/manifest.json:55:    "name": "@resvg/resvg-js",
+skills/mascot/scripts/validate-smooth-frames.mjs:143:      if (manifest.rasterizer?.name !== '@resvg/resvg-js' || gotVersion !== wantVersion) {
+skills/mascot/scripts/validate-smooth-frames.mjs:144:        fail(`manifest rasterizer: ${manifest.rasterizer?.name}@${gotVersion}, expected @resvg/resvg-js@${wantVersion}`);
+skills/mascot/scripts/validate-smooth-frames.mjs:145:      } else ok(`rasterizer: @resvg/resvg-js@${gotVersion} (pinned)`);
+
+--- consuming-app vendoring surface (pipeline.md target layout) ---
+8:│   ├── engine.mjs              # vendored from the skill (never edited per-app)
+24:cp "$SKILL_DIR/scripts/engine.mjs"            <app>/scripts/mascots/
+30:If the app already has a `scripts/mascots/engine.mjs`, do NOT overwrite it with
+78:node scripts/mascots/engine.mjs scripts/mascots/packs/<animal>.mjs \
+100:- Rasterizer: `@resvg/resvg-js`, exact-pinned in the mascots repo's root
+105:- Engine: `scripts/smooth-engine.mjs` renders each frame, a `contact_sheet.png`
+117:node scripts/smooth-engine.mjs scripts/packs/<animal>.mjs --out <dir>

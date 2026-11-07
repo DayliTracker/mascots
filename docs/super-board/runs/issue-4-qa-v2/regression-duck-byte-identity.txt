@@ -1,0 +1,15 @@
+=== regression: pixel duck pipeline untouched (AGENTS.md guard) ===
+--- pixel validator on this branch ---
+determinism (re-render byte-compare)
+  ✓ all files reproduce byte-for-byte
+
+PASS — 0 problem(s)
+exit=0
+
+--- render pixel duck on branch vs origin/main, byte-compare all files ---
+branch render ok
+HEAD is now at 691b3f2 🔧 [chore] mascots: shelve 48px class, adopt smooth-art ADR
+origin/main render ok
+diff -r: NO DIFFERENCES — pixel duck renders byte-identical between branch and origin/main
+diff-exit=0
+files compared: 10

@@ -1,0 +1,93 @@
+$ node skills/mascot/scripts/smooth-engine.mjs skills/mascot/scripts/packs/smooth-duck.mjs --out docs/super-board/runs/issue-4-qa-v3/render-a
+Wrote 9 files to /Users/gauwan/Codespaces/mascots/.claude/worktrees/issue-4-qa/docs/super-board/runs/issue-4-qa-v3/render-a
+exit=0
+
+--- files in render-a ---
+total 328
+drwxr-xr-x@ 11 gauwan  staff    352 Nov  7 22:51 .
+drwxr-xr-x@  4 gauwan  staff    128 Nov  7 22:51 ..
+-rw-r--r--@  1 gauwan  staff  22789 Nov  7 22:51 contact_sheet.png
+-rw-r--r--@  1 gauwan  staff   1096 Nov  7 22:51 manifest.json
+-rw-r--r--@  1 gauwan  staff  16307 Nov  7 22:51 smooth-duck_blink.png
+-rw-r--r--@  1 gauwan  staff  17119 Nov  7 22:51 smooth-duck_happy.png
+-rw-r--r--@  1 gauwan  staff  16806 Nov  7 22:51 smooth-duck_idle.png
+-rw-r--r--@  1 gauwan  staff  16789 Nov  7 22:51 smooth-duck_look.png
+-rw-r--r--@  1 gauwan  staff  17978 Nov  7 22:51 smooth-duck_surprised.png
+-rw-r--r--@  1 gauwan  staff  17424 Nov  7 22:51 smooth-duck_walk_a.png
+-rw-r--r--@  1 gauwan  staff  17463 Nov  7 22:51 smooth-duck_walk_b.png
+
+--- manifest.json ---
+{
+  "pack": "smooth-duck",
+  "art": "smooth",
+  "canvas": 512,
+  "frames": [
+    {
+      "name": "idle",
+      "file": "smooth-duck_idle.png",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "blink",
+      "file": "smooth-duck_blink.png",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "look",
+      "file": "smooth-duck_look.png",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "walk_a",
+      "file": "smooth-duck_walk_a.png",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "walk_b",
+      "file": "smooth-duck_walk_b.png",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "happy",
+      "file": "smooth-duck_happy.png",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "surprised",
+      "file": "smooth-duck_surprised.png",
+      "width": 512,
+      "height": 512
+    }
+  ],
+  "sheet": {
+    "file": "contact_sheet.png",
+    "width": 1751,
+    "height": 281
+  },
+  "rasterizer": {
+    "name": "@resvg/resvg-js",
+    "version": "2.6.2"
+  },
+  "generator": "smooth-engine.mjs"
+}
+--- frame verification (v3) ---
+manifest frame order: idle, blink, look, walk_a, walk_b, happy, surprised
+order matches 7-frame contract: YES (idle, blink, look, walk_a, walk_b, happy, surprised)
+frame file count: 7 (expect 7)
+--- dimensions (PNG IHDR) ---
+smooth-duck_idle.png: 512x512
+smooth-duck_blink.png: 512x512
+smooth-duck_look.png: 512x512
+smooth-duck_walk_a.png: 512x512
+smooth-duck_walk_b.png: 512x512
+smooth-duck_happy.png: 512x512
+smooth-duck_surprised.png: 512x512
+--- pairwise byte-distinct check ---
+pairs compared: 21, byte-distinct pairs: 21 (expect 21 for 7 frames)
+RESULT: AC1 PASS

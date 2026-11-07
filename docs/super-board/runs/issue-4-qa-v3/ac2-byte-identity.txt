@@ -1,0 +1,33 @@
+$ node skills/mascot/scripts/smooth-engine.mjs skills/mascot/scripts/packs/smooth-duck.mjs --out docs/super-board/runs/issue-4-qa-v3/render-b  (independent second render)
+Wrote 9 files to /Users/gauwan/Codespaces/mascots/.claude/worktrees/issue-4-qa/docs/super-board/runs/issue-4-qa-v3/render-b
+exit=0
+
+--- diff -r render-a render-b ---
+diff -r: NO DIFFERENCES — all 9 files byte-identical across two independent renders
+diff-exit=0
+
+--- sha256 (render-a) ---
+af173938d24413dc3ba4d1e5d060804b95f16951accdc09bc4b883720a81c67d  contact_sheet.png
+589b9cb90df053abe234033fa74c757305e3839688a7d98c9cee5cf3f4efcf75  manifest.json
+826baa787d2a3715cb917723bfddb96954053417c417c36f31a57986f703b153  smooth-duck_blink.png
+2737bbc79cf216fd666b85e70d8d67035e480b26fbca02f5f9d0f3b57fff8b10  smooth-duck_happy.png
+bc41ec579ebe0ff2cb1e2611c30b8bf3e033d1742f3c425347a81891fe053f19  smooth-duck_idle.png
+77568943c81b5b3e95d532b1af70fcc6de923cfc82bc48b320fb4881f3e467f2  smooth-duck_look.png
+764aa3f72ce738668bd93c4c2acd0ff8caf26ef5a4e67abab141de25248c8a52  smooth-duck_surprised.png
+4c4a3fc1d1d07546fda95adea0bff65c82ad5e38b4baed5ef6fe48abb00e4c9a  smooth-duck_walk_a.png
+fb2b418bf261c4066ded6f527c433ba3e02cd3cdfa975f5b89e946ea22c8b7fb  smooth-duck_walk_b.png
+
+--- sha256 (render-b) ---
+af173938d24413dc3ba4d1e5d060804b95f16951accdc09bc4b883720a81c67d  contact_sheet.png
+589b9cb90df053abe234033fa74c757305e3839688a7d98c9cee5cf3f4efcf75  manifest.json
+826baa787d2a3715cb917723bfddb96954053417c417c36f31a57986f703b153  smooth-duck_blink.png
+2737bbc79cf216fd666b85e70d8d67035e480b26fbca02f5f9d0f3b57fff8b10  smooth-duck_happy.png
+bc41ec579ebe0ff2cb1e2611c30b8bf3e033d1742f3c425347a81891fe053f19  smooth-duck_idle.png
+77568943c81b5b3e95d532b1af70fcc6de923cfc82bc48b320fb4881f3e467f2  smooth-duck_look.png
+764aa3f72ce738668bd93c4c2acd0ff8caf26ef5a4e67abab141de25248c8a52  smooth-duck_surprised.png
+4c4a3fc1d1d07546fda95adea0bff65c82ad5e38b4baed5ef6fe48abb00e4c9a  smooth-duck_walk_a.png
+fb2b418bf261c4066ded6f527c433ba3e02cd3cdfa975f5b89e946ea22c8b7fb  smooth-duck_walk_b.png
+
+--- manifest timestamps? ---
+0
+"generator": "smooth-engine.mjs"
