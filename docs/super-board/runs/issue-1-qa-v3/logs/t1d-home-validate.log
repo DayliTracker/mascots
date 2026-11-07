@@ -1,0 +1,29 @@
+files
+  ✓ tester_idle.png
+  ✓ tester_blink.png
+  ✓ tester_look.png
+  ✓ tester_walk_a.png
+  ✓ tester_walk_b.png
+  ✓ tester_happy.png
+  ✓ tester_surprised.png
+  ✓ particle_star.png
+  ✓ particle_heart.png
+  ✓ contact_sheet.png
+dimensions + palette lock + silhouette + registration
+  ✓ tester_idle.png: 500x500
+  ✓ tester_blink.png: 500x500
+  ✓ tester_look.png: 500x500
+  ✓ tester_walk_a.png: 500x500
+  ✓ tester_walk_b.png: 500x500
+  ✓ tester_happy.png: 500x500
+  ✓ tester_surprised.png: 500x500
+  ✓ tester_blink.png: 93.9% shared with tester_idle.png
+  ✓ tester_look.png: 95.2% shared with tester_idle.png
+  ✓ tester_walk_a.png: 94.7% shared with tester_idle.png
+  ✓ tester_walk_b.png: 97.0% shared with tester_idle.png
+  ✓ tester_happy.png: 83.6% shared with tester_idle.png
+  ✓ tester_surprised.png: 88.1% shared with tester_idle.png
+determinism (re-render byte-compare)
+  ✓ all files reproduce byte-for-byte
+
+PASS — 0 problem(s)

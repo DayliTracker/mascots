@@ -1,6 +1,7 @@
 // test-dual-mode-docs — doc-conformance checks for the /mascot dual-mode skill
-// (issue #1, QA v2). The docs ACs have no code rung; these checks pin the
-// documented contract so a doc edit that drops dual-mode support fails here.
+// (issue #1, QA v2; R1 pins added QA v3). The docs ACs have no code rung; these
+// checks pin the documented contract so a doc edit that drops dual-mode support
+// fails here.
 //
 //   node test-dual-mode-docs.mjs
 
@@ -56,6 +57,12 @@ has('NEVERs say art is code in BOTH kinds', skill, 'BOTH kinds');
 has('NEVERs name hand-written pixel maps AND hand-authored SVG', skill, 'pixel maps', 'hand-authored SVG');
 has('NEVERs keep the image-gen exclusion', skill, 'image-gen AI');
 has('smooth starter itself says no image generation', read('scripts/new-pack.mjs'), 'no image generation');
+
+console.log('R1 (review round 1) — the pixel scaffold flow is runnable where the pack must live');
+has('SKILL.md step 3 runs the scaffolder from the skill dir', skill, '$SKILL_DIR/scripts/new-pack.mjs', 'runs from the skill dir');
+has('SKILL.md step 3 copies a scaffolded pixel pack into the app', skill, '<app>/scripts/mascots/packs/');
+has('pipeline.md marks the scaffolder not vendored, run from $SKILL_DIR/scripts', pipeline, 'is not vendored', '$SKILL_DIR/scripts/');
+has('pipeline.md copies a scaffolded pixel pack into the app before rendering', pipeline, 'copy the scaffolded file into `<app>/scripts/mascots/packs/`');
 
 const failed = results.filter((ok) => !ok).length;
 console.log(`\n${failed === 0 ? 'PASS' : 'FAIL'} — ${results.length - failed}/${results.length} checks`);

@@ -1,0 +1,25 @@
+files
+  ✗ missing tester_idle.png
+  ✗ missing tester_blink.png
+  ✗ missing tester_look.png
+  ✗ missing tester_walk_a.png
+  ✗ missing tester_walk_b.png
+  ✗ missing tester_happy.png
+  ✗ missing tester_surprised.png
+  ✗ missing particle_star.png
+  ✗ missing particle_heart.png
+  ✗ missing contact_sheet.png
+dimensions + palette lock + silhouette + registration
+determinism (re-render byte-compare)
+  ✗ tester_idle.png: re-render does not match on disk
+  ✗ tester_blink.png: re-render does not match on disk
+  ✗ tester_look.png: re-render does not match on disk
+  ✗ tester_walk_a.png: re-render does not match on disk
+  ✗ tester_walk_b.png: re-render does not match on disk
+  ✗ tester_happy.png: re-render does not match on disk
+  ✗ tester_surprised.png: re-render does not match on disk
+  ✗ particle_star.png: re-render does not match on disk
+  ✗ particle_heart.png: re-render does not match on disk
+  ✗ contact_sheet.png: re-render does not match on disk
+
+FAIL — 20 problem(s)

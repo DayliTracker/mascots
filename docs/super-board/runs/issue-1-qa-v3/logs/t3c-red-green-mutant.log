@@ -1,0 +1,26 @@
+AC1 — SKILL.md documents the smooth pipeline and when to choose each kind
+  ✓ kind-choice table with a "Choose when" row per kind
+  ✓ smooth pipeline steps name the smooth engine + repo-side render
+  ✓ pixel pipeline steps name the pixel engine + validator
+  ✓ scaffolder documented with both kinds
+  ✓ pipeline.md carries smooth rendering + app layout
+AC2 — references cover smooth craft and smooth QA
+  ✓ craft.md has the SVG-authoring section
+  ✓ craft.md bans <text> in SVG frames
+  ✓ craft.md states the alpha gate as the outline discipline
+  ✓ craft.md keeps the pixel sections
+  ✓ qa.md names the smooth validator checks
+  ✓ qa.md documents contact-sheet knobs
+  ✓ recipes apply to both kinds
+AC5 — NEVERs span pixel maps and SVG; image-gen stays excluded
+  ✓ NEVERs say art is code in BOTH kinds
+  ✓ NEVERs name hand-written pixel maps AND hand-authored SVG
+  ✓ NEVERs keep the image-gen exclusion
+  ✓ smooth starter itself says no image generation
+R1 (review round 1) — the pixel scaffold flow is runnable where the pack must live
+  ✗ SKILL.md step 3 runs the scaffolder from the skill dir — missing one of: "$SKILL_DIR/scripts/new-pack.mjs", "runs from the skill dir"
+  ✓ SKILL.md step 3 copies a scaffolded pixel pack into the app
+  ✓ pipeline.md marks the scaffolder not vendored, run from $SKILL_DIR/scripts
+  ✓ pipeline.md copies a scaffolded pixel pack into the app before rendering
+
+FAIL — 19/20 checks
