@@ -2,6 +2,9 @@
 //
 //   node validate-frames.mjs <pack.mjs> [--out <dir>]
 //
+// With no --out and no frames in the pack's directory (a fresh checkout has
+// only the pack source), validates a fresh render of the pack instead.
+//
 // Checks (all must pass, exit 1 otherwise):
 //   1. files: every frame + particle + contact_sheet.png exists
 //   2. dimensions: frame PNGs are square, exactly grid*scale
@@ -59,7 +62,22 @@ async function main() {
   const outIdx = args.indexOf('--out');
   const packMod = await import(pathToFileURL(resolve(packPath)).href);
   const pack = packMod.default;
-  const outDir = resolve(outIdx >= 0 ? args[outIdx + 1] : dirname(resolve(packPath)));
+  const packDir = dirname(resolve(packPath));
+  let outDir = outIdx >= 0 ? resolve(args[outIdx + 1]) : packDir;
+  const expected = [
+    ...Object.keys(pack.frames).map((f) => `${pack.name}_${f}.png`),
+    ...Object.keys(pack.particles ?? {}).map((p) => `particle_${p}.png`),
+    'contact_sheet.png',
+  ];
+
+  let renderTmp = null;
+  if (outIdx < 0 && !expected.some((f) => existsSync(join(packDir, f)))) {
+    renderTmp = mkdtempSync(join(tmpdir(), 'mascots-validate-'));
+    await renderPack(packPath, { out: renderTmp });
+    outDir = renderTmp;
+    console.log(`no frames in ${packDir} — validating a fresh render of the pack\n`);
+  }
+
   const palette = Object.fromEntries(
     Object.entries(pack.palette).map(([k, v]) => [k, hexToRgba(v)])
   );
@@ -71,11 +89,6 @@ async function main() {
     console.log(`  ✗ ${msg}`);
   };
 
-  const expected = [
-    ...Object.keys(pack.frames).map((f) => `${pack.name}_${f}.png`),
-    ...Object.keys(pack.particles ?? {}).map((p) => `particle_${p}.png`),
-    'contact_sheet.png',
-  ];
   console.log('files');
   for (const f of expected) {
     existsSync(join(outDir, f)) ? ok(f) : fail(`missing ${f}`);
@@ -164,6 +177,7 @@ async function main() {
   }
   if (deterministic) ok('all files reproduce byte-for-byte');
   rmSync(tmp, { recursive: true, force: true });
+  if (renderTmp) rmSync(renderTmp, { recursive: true, force: true });
 
   console.log(`\n${problems.length === 0 ? 'PASS' : 'FAIL'} — ${problems.length} problem(s)`);
   process.exit(problems.length === 0 ? 0 : 1);
