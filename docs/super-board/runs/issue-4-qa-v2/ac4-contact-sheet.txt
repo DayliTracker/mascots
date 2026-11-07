@@ -1,0 +1,11 @@
+=== AC4: contact sheet emitted for art review ===
+--- fresh render's sheet ---
+/Users/gauwan/Codespaces/mascots/.claude/worktrees/issue-4-qa/docs/super-board/runs/issue-4-qa-v2/render-a/contact_sheet.png
+  pixelWidth: 1751
+  pixelHeight: 281
+--- manifest sheet dims ---
+manifest sheet: {"file":"contact_sheet.png","width":1751,"height":281}
+--- committed demo sheet vs fresh render (byte compare) ---
+BYTE-IDENTICAL: docs/demo/smooth-duck-contact-sheet.png == fresh render contact_sheet.png
+--- copy to evidence ---
+-rw-r--r--@ 1 gauwan  staff  22789 Nov  7 22:02 docs/super-board/runs/issue-4-qa-v2/ac4-contact-sheet.png

@@ -1,0 +1,148 @@
+$ node skills/mascot/scripts/smooth-engine.mjs skills/mascot/scripts/packs/smooth-duck.mjs --out docs/super-board/runs/issue-4-qa-v2/render-a
+Wrote 9 files to /Users/gauwan/Codespaces/mascots/.claude/worktrees/issue-4-qa/docs/super-board/runs/issue-4-qa-v2/render-a
+exit=0
+
+--- files in render-a ---
+total 328
+drwxr-xr-x@ 11 gauwan  staff    352 Nov  7 22:00 .
+drwxr-xr-x@  4 gauwan  staff    128 Nov  7 22:00 ..
+-rw-r--r--@  1 gauwan  staff  22789 Nov  7 22:00 contact_sheet.png
+-rw-r--r--@  1 gauwan  staff   1096 Nov  7 22:00 manifest.json
+-rw-r--r--@  1 gauwan  staff  16307 Nov  7 22:00 smooth-duck_blink.png
+-rw-r--r--@  1 gauwan  staff  17119 Nov  7 22:00 smooth-duck_happy.png
+-rw-r--r--@  1 gauwan  staff  16806 Nov  7 22:00 smooth-duck_idle.png
+-rw-r--r--@  1 gauwan  staff  16789 Nov  7 22:00 smooth-duck_look.png
+-rw-r--r--@  1 gauwan  staff  17978 Nov  7 22:00 smooth-duck_surprised.png
+-rw-r--r--@  1 gauwan  staff  17424 Nov  7 22:00 smooth-duck_walk_a.png
+-rw-r--r--@  1 gauwan  staff  17463 Nov  7 22:00 smooth-duck_walk_b.png
+
+--- manifest.json ---
+{
+  "pack": "smooth-duck",
+  "art": "smooth",
+  "canvas": 512,
+  "frames": [
+    {
+      "name": "idle",
+      "file": "smooth-duck_idle.png",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "blink",
+      "file": "smooth-duck_blink.png",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "look",
+      "file": "smooth-duck_look.png",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "walk_a",
+      "file": "smooth-duck_walk_a.png",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "walk_b",
+      "file": "smooth-duck_walk_b.png",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "happy",
+      "file": "smooth-duck_happy.png",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "surprised",
+      "file": "smooth-duck_surprised.png",
+      "width": 512,
+      "height": 512
+    }
+  ],
+  "sheet": {
+    "file": "contact_sheet.png",
+    "width": 1751,
+    "height": 281
+  },
+  "rasterizer": {
+    "name": "@resvg/resvg-js",
+    "version": "2.6.2"
+  },
+  "generator": "smooth-engine.mjs"
+}
+
+--- dimensions (sips) ---
+/Users/gauwan/Codespaces/mascots/.claude/worktrees/issue-4-qa/docs/super-board/runs/issue-4-qa-v2/render-a/smooth-duck_blink.png   pixelWidth: 512   pixelHeight: 512 
+/Users/gauwan/Codespaces/mascots/.claude/worktrees/issue-4-qa/docs/super-board/runs/issue-4-qa-v2/render-a/smooth-duck_happy.png   pixelWidth: 512   pixelHeight: 512 
+/Users/gauwan/Codespaces/mascots/.claude/worktrees/issue-4-qa/docs/super-board/runs/issue-4-qa-v2/render-a/smooth-duck_idle.png   pixelWidth: 512   pixelHeight: 512 
+/Users/gauwan/Codespaces/mascots/.claude/worktrees/issue-4-qa/docs/super-board/runs/issue-4-qa-v2/render-a/smooth-duck_look.png   pixelWidth: 512   pixelHeight: 512 
+/Users/gauwan/Codespaces/mascots/.claude/worktrees/issue-4-qa/docs/super-board/runs/issue-4-qa-v2/render-a/smooth-duck_surprised.png   pixelWidth: 512   pixelHeight: 512 
+/Users/gauwan/Codespaces/mascots/.claude/worktrees/issue-4-qa/docs/super-board/runs/issue-4-qa-v2/render-a/smooth-duck_walk_a.png   pixelWidth: 512   pixelHeight: 512 
+/Users/gauwan/Codespaces/mascots/.claude/worktrees/issue-4-qa/docs/super-board/runs/issue-4-qa-v2/render-a/smooth-duck_walk_b.png   pixelWidth: 512   pixelHeight: 512 
+
+--- pairwise byte-distinct check (7 frames) ---
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+zsh:22: condition expected: <
+pairs compared: 0, byte-distinct pairs: 0 (expect 21 for 7 frames)
+frame files (7):
+  smooth-duck_blink.png
+  smooth-duck_happy.png
+  smooth-duck_idle.png
+  smooth-duck_look.png
+  smooth-duck_surprised.png
+  smooth-duck_walk_a.png
+  smooth-duck_walk_b.png
+pairs compared: 21, byte-distinct pairs: 21 (expect 21 for 7 frames)

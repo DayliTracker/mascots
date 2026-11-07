@@ -1,0 +1,46 @@
+=== AC3c: red path — mutated pack with a stray blob outside the silhouette must FAIL ===
+$ inject <circle cx=40 cy=40 r=18 fill=#FF0000> into a copy of the pack (module stays valid)
+$ node smooth-engine.mjs /tmp/issue4-qa-v2-mut/smooth-duck.mjs --out /tmp/issue4-qa-v2-mut/out   (render the mutated pack)
+$ node validate-smooth-frames.mjs /tmp/issue4-qa-v2-mut/smooth-duck.mjs --out /tmp/issue4-qa-v2-mut/out   (validate)
+files
+  ✓ smooth-duck_idle.png
+  ✓ smooth-duck_blink.png
+  ✓ smooth-duck_look.png
+  ✓ smooth-duck_walk_a.png
+  ✓ smooth-duck_walk_b.png
+  ✓ smooth-duck_happy.png
+  ✓ smooth-duck_surprised.png
+  ✓ contact_sheet.png
+  ✓ manifest.json
+manifest
+  ✓ pack: smooth-duck
+  ✓ canvas: 512
+  ✓ frames: 7 in pack order
+  ✓ rasterizer: @resvg/resvg-js@2.6.2 (pinned)
+dimensions + alpha outside silhouette
+  ✓ smooth-duck_idle.png: 512x512
+  ✗ smooth-duck_idle.png: 1060 opaque pixels outside the silhouette
+  ✓ smooth-duck_blink.png: 512x512
+  ✗ smooth-duck_blink.png: 1060 opaque pixels outside the silhouette
+  ✓ smooth-duck_look.png: 512x512
+  ✗ smooth-duck_look.png: 1060 opaque pixels outside the silhouette
+  ✓ smooth-duck_walk_a.png: 512x512
+  ✗ smooth-duck_walk_a.png: 1060 opaque pixels outside the silhouette
+  ✓ smooth-duck_walk_b.png: 512x512
+  ✗ smooth-duck_walk_b.png: 1060 opaque pixels outside the silhouette
+  ✓ smooth-duck_happy.png: 512x512
+  ✗ smooth-duck_happy.png: 1060 opaque pixels outside the silhouette
+  ✓ smooth-duck_surprised.png: 512x512
+  ✗ smooth-duck_surprised.png: 1060 opaque pixels outside the silhouette
+registration (frames differ from the base frame)
+  ✓ smooth-duck_blink.png: 1744 px differ from smooth-duck_idle.png
+  ✓ smooth-duck_look.png: 2682 px differ from smooth-duck_idle.png
+  ✓ smooth-duck_walk_a.png: 2928 px differ from smooth-duck_idle.png
+  ✓ smooth-duck_walk_b.png: 2928 px differ from smooth-duck_idle.png
+  ✓ smooth-duck_happy.png: 14425 px differ from smooth-duck_idle.png
+  ✓ smooth-duck_surprised.png: 6349 px differ from smooth-duck_idle.png
+determinism (re-render byte-compare)
+  ✓ all files reproduce byte-for-byte
+
+FAIL — 7 problem(s)
+exit=1
