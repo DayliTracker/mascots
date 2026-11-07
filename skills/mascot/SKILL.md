@@ -48,11 +48,15 @@ passes the kind's validator as-is.
    `manifest.json` into `<app>/assets/mascots/<animal>/`. The build scripts
    and generated PNGs live in a repo, diffable and regenerable. Details:
    `references/pipeline.md`.
-3. **Design the pack** — scaffold (`node scripts/new-pack.mjs <animal>
-   --kind <kind>`), then follow `references/animal-recipes.md` (construction)
-   and `references/craft.md` (palette, outline, timing — pixel; smooth craft:
-   SVG authoring). Study the kind's reference pack first — `duck.mjs` (pixel)
-   or `smooth-duck.mjs` (smooth) is the reference implementation.
+3. **Design the pack** — scaffold (`node "$SKILL_DIR/scripts/new-pack.mjs"
+   <animal> --kind <kind>` — the scaffolder runs from the skill dir, not the
+   app repo, and writes `scripts/packs/<animal>.mjs` beside itself: smooth
+   packs stay in the mascots repo; for a pixel pack copy the scaffolded file
+   into `<app>/scripts/mascots/packs/` before rendering), then follow
+   `references/animal-recipes.md` (construction) and `references/craft.md`
+   (palette, outline, timing — pixel; smooth craft: SVG authoring). Study the
+   kind's reference pack first — `duck.mjs` (pixel) or `smooth-duck.mjs`
+   (smooth) is the reference implementation.
 4. **GATE 1 · art** — generate the kind's engine
    (`node scripts/mascots/engine.mjs scripts/mascots/packs/<animal>.mjs --out
    <app>/assets/mascots/<animal>` — or, for smooth packs,

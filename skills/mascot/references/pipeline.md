@@ -49,6 +49,12 @@ cp "$(dirname "$SKILL_DIR")/../react-native/PixelPet.tsx" <app>/components/
 If the app already has a `scripts/mascots/engine.mjs`, do NOT overwrite it with
 an older/newer copy silently — diff first and tell the user what changed.
 
+The scaffolder `scripts/new-pack.mjs` is not vendored — it runs from
+`$SKILL_DIR/scripts/` and always writes `scripts/packs/<animal>.mjs` next to
+itself. Smooth packs scaffold straight into the mascots repo; for a pixel
+pack, copy the scaffolded file into `<app>/scripts/mascots/packs/` before
+rendering with the vendored engine.
+
 ## Pack anatomy
 
 A pack is one ES module. Full worked example: `scripts/packs/duck.mjs`.
