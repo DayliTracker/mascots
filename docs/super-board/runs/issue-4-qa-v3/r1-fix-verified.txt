@@ -1,0 +1,22 @@
+# R1 fix verification — Reviewer round-2 bounce: byte-identity overclaim
+
+Finding: PR body + pipeline.md claimed frames regenerate "byte-for-byte identical" implying cross-machine proof; a same-machine diff does not prove cross-machine identity.
+
+$ sed -n 100,106p skills/mascot/references/pipeline.md   (fixed wording)
+- Rasterizer: `@resvg/resvg-js`, exact-pinned in the mascots repo's root
+  `package.json` — a build-time dependency of this repo only. Frame SVGs
+  contain no `<text>` and the engine sets `loadSystemFonts: false`, so no
+  font metrics enter the pipeline. Same-machine byte-identity is proven:
+  two independent renders byte-compare equal, and the validator re-renders
+  and byte-compares on every exit. Cross-machine identity rests on design —
+  the exact pin, no `<text>`, no system fonts, no timestamps — a same-machine
+
+--- old overclaim wording anywhere in the branch tree? ---
+no overclaim wording found
+
+--- what the diff changed (fc21719..62a4090 = the R1 rebuild) ---
+ skills/mascot/references/pipeline.md | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+--- PR body claim now (block sb:solution, Docs bullet) ---
+"Same-machine byte-identity is proven (two renders byte-compared equal; the validator re-renders and byte-compares on every exit); cross-machine identity rests on that design and is not proven by a same-machine diff." — verified present in PR #10 body at head 62a4090 (read via gh pr view 10 --json body)

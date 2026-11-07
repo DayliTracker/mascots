@@ -1,0 +1,16 @@
+# pixel-duck regression: branch render vs origin/main render (AGENTS.md guard: PNGs byte-identical)
+
+branch render:  node skills/mascot/scripts/engine.mjs skills/mascot/scripts/packs/duck.mjs --out /tmp/qa3-duck-branch
+main render:    origin/main extracted via git archive -> /private/tmp/qa3-duck-main; engine run from there
+
+$ diff -r /tmp/qa3-duck-branch /tmp/qa3-duck-main-render
+diff -r: NO DIFFERENCES — duck render byte-identical between branch and origin/main, all 10 files
+diff-exit=0
+
+file count: branch 10, main 10
+
+--- pixel engine / validator / duck pack diff vs main (expect empty) ---
+(empty = untouched by this PR)
+
+--- note: engine.mjs:236 CLI guard silently no-ops when the engine is invoked via /tmp/... on macOS
+(node canonicalizes import.meta.url to /private/tmp). Pre-existing on main — the extracted origin/main engine shows the same behavior; not a regression of this PR.
