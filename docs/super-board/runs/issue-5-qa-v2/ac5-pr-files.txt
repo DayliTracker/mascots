@@ -1,0 +1,13 @@
+$ git diff --name-status a9ab92d..HEAD
+A	docs/adr/0001-smooth-art-over-pixel-art.md
+A	docs/super-board/runs/issue-5-qa-v1/REPORT.md
+A	docs/super-board/runs/issue-5-qa-v1/ac1-wip-branch.txt
+A	docs/super-board/runs/issue-5-qa-v1/ac2-main-parity.txt
+A	docs/super-board/runs/issue-5-qa-v1/ac3-ac5-adr-diff.txt
+A	docs/super-board/runs/issue-5-qa-v1/verify-ac-run.log
+A	docs/super-board/runs/issue-5-qa-v1/verify-ac.sh
+A	docs/super-board/runs/issue-5-qa-v1/verify-commands-bare-fail.txt
+A	docs/super-board/runs/issue-5-qa-v1/verify-commands.txt
+
+$ git diff --quiet a9ab92d..HEAD -- skills/mascot/scripts/packs/duck.mjs skills/mascot/scripts/engine.mjs && echo IDENTICAL
+IDENTICAL

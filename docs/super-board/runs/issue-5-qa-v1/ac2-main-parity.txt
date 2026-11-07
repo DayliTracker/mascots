@@ -1,0 +1,5 @@
+== AC2: mascots local main vs origin/main ==
+0	0
+-- rev-parse
+52cfe78f4f96d1ab1d7ec279042b33e9d4abffaf
+52cfe78f4f96d1ab1d7ec279042b33e9d4abffaf

@@ -1,0 +1,10 @@
+== AC1: wip/48px-class on remote ==
+325087d57a43aaad00e03d28b1ae74bb5efcb831	refs/heads/wip/48px-class
+sha=325087d57a43aaad00e03d28b1ae74bb5efcb831
+-- rev-list --count 52cfe78..325087d57a43aaad00e03d28b1ae74bb5efcb831
+4
+-- subjects
+325087d 🚧 [wip] duck48: 48px-class duck redraw — Gate 1 pending user verdict
+1e474d6 📝 [docs] style: 48px style guide from reference measurements + pack scaffolder + CI
+11a120c ✨ [feat] engine: style tokens — warm-biased shadeTones, selective outline, ground shadow
+555afe3 ♻️ [refactor] skill: framework-agnostic contract, engine emits manifest.json

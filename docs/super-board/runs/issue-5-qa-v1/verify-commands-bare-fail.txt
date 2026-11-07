@@ -1,0 +1,27 @@
+== config verify_commands[1] verbatim (bare, no --out) on fresh checkout ==
+files
+  ✗ missing duck_idle.png
+  ✗ missing duck_blink.png
+  ✗ missing duck_look.png
+  ✗ missing duck_walk_a.png
+  ✗ missing duck_walk_b.png
+  ✗ missing duck_happy.png
+  ✗ missing duck_surprised.png
+  ✗ missing particle_star.png
+  ✗ missing particle_heart.png
+  ✗ missing contact_sheet.png
+dimensions + palette lock + silhouette + registration
+determinism (re-render byte-compare)
+  ✗ duck_idle.png: re-render does not match on disk
+  ✗ duck_blink.png: re-render does not match on disk
+  ✗ duck_look.png: re-render does not match on disk
+  ✗ duck_walk_a.png: re-render does not match on disk
+  ✗ duck_walk_b.png: re-render does not match on disk
+  ✗ duck_happy.png: re-render does not match on disk
+  ✗ duck_surprised.png: re-render does not match on disk
+  ✗ particle_star.png: re-render does not match on disk
+  ✗ particle_heart.png: re-render does not match on disk
+  ✗ contact_sheet.png: re-render does not match on disk
+
+FAIL — 20 problem(s)
+exit=1
