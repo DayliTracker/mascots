@@ -1,0 +1,41 @@
+files
+  ✓ starter_idle.png
+  ✓ starter_blink.png
+  ✓ starter_look.png
+  ✓ starter_walk_a.png
+  ✓ starter_walk_b.png
+  ✓ starter_happy.png
+  ✓ starter_surprised.png
+  ✓ contact_sheet.png
+  ✓ manifest.json
+manifest
+  ✓ pack: starter
+  ✓ canvas: 512
+  ✓ frames: 7 in pack order
+  ✓ rasterizer: @resvg/resvg-js@2.6.2 (pinned)
+dimensions + alpha outside silhouette
+  ✓ starter_idle.png: 512x512
+  ✓ starter_idle.png: alpha inside silhouette (85290 opaque px)
+  ✓ starter_blink.png: 512x512
+  ✓ starter_blink.png: alpha inside silhouette (85290 opaque px)
+  ✓ starter_look.png: 512x512
+  ✓ starter_look.png: alpha inside silhouette (85290 opaque px)
+  ✓ starter_walk_a.png: 512x512
+  ✓ starter_walk_a.png: alpha inside silhouette (85344 opaque px)
+  ✓ starter_walk_b.png: 512x512
+  ✓ starter_walk_b.png: alpha inside silhouette (85344 opaque px)
+  ✓ starter_happy.png: 512x512
+  ✓ starter_happy.png: alpha inside silhouette (85290 opaque px)
+  ✓ starter_surprised.png: 512x512
+  ✓ starter_surprised.png: alpha inside silhouette (85290 opaque px)
+registration (frames differ from the base frame)
+  ✓ starter_blink.png: 1744 px differ from starter_idle.png
+  ✓ starter_look.png: 2618 px differ from starter_idle.png
+  ✓ starter_walk_a.png: 1964 px differ from starter_idle.png
+  ✓ starter_walk_b.png: 1964 px differ from starter_idle.png
+  ✓ starter_happy.png: 2750 px differ from starter_idle.png
+  ✓ starter_surprised.png: 4788 px differ from starter_idle.png
+determinism (re-render byte-compare)
+  ✓ all files reproduce byte-for-byte
+
+PASS — 0 problem(s)

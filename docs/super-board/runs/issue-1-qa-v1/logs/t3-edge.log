@@ -1,0 +1,17 @@
+### T3.6a invalid name (space+uppercase)
+usage: node new-pack.mjs <animal> [--kind smooth|pixel]
+
+  --kind smooth  SVG starter for smooth-engine.mjs (default — flagship per ADR 0001)
+  --kind pixel   pixel-map starter for engine.mjs (zero-dep, vendored into apps)
+exit=2
+
+### T3.6b existing file guard
+/Users/gauwan/Codespaces/mascots/.claude/worktrees/issue-1-qa/skills/mascot/scripts/packs/qa-smooth.mjs already exists — pick another name
+exit=1
+
+### T3.6c invalid kind
+usage: node new-pack.mjs <animal> [--kind smooth|pixel]
+
+  --kind smooth  SVG starter for smooth-engine.mjs (default — flagship per ADR 0001)
+  --kind pixel   pixel-map starter for engine.mjs (zero-dep, vendored into apps)
+exit=2

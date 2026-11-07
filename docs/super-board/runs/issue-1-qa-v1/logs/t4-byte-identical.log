@@ -1,0 +1,17 @@
+### T4.3 byte-identical duck render: origin/main vs branch (contact sheet excluded)
+IDENTICAL duck_blink.png
+IDENTICAL duck_happy.png
+IDENTICAL duck_idle.png
+IDENTICAL duck_look.png
+IDENTICAL duck_surprised.png
+IDENTICAL duck_walk_a.png
+IDENTICAL duck_walk_b.png
+IDENTICAL particle_heart.png
+IDENTICAL particle_star.png
+shasum: manifest.json: No such file or directory
+shasum: /tmp/check-branch/manifest.json: No such file or directory
+IDENTICAL manifest.json
+
+contact_sheet.png (may evolve per AGENTS.md):
+188ce742d2b1894205a3bb5571a42ff79218364aac6237b8cd650490cba7315a  contact_sheet.png
+188ce742d2b1894205a3bb5571a42ff79218364aac6237b8cd650490cba7315a  /tmp/check-branch/contact_sheet.png

@@ -1,5 +1,9 @@
 # QA — polish passes, gates, simulator evidence
 
+The vision critique loop and the three gates apply to BOTH pack kinds; the
+validator command and the sheet knobs differ. Pixel sections below cite
+`validate-frames.mjs`; "Smooth packs" cites `validate-smooth-frames.mjs`.
+
 ## The vision critique loop (run before Gate 1, unattended)
 
 View the generated `contact_sheet.png` (Read tool renders images) and check,
@@ -20,13 +24,33 @@ Fix → regenerate → recheck. Minimum 2 critique-fix passes before showing the
 user. Then Gate 1: show the sheet path, name what you fixed, ask "cute
 enough?" — and WAIT. Ship nothing until the verdict.
 
+Smooth contact sheets come from the same loop: `smooth-engine.mjs` writes
+`contact_sheet.png` next to the frames. Sheet look is a pack knob —
+`sheet: { bg, scale, gap, pad }` (smooth-duck: `#FAF3E6`, 0.44, 20, 28).
+Bump `scale` if faces are too small to critique; the sheet is evidence, the
+frames are the product.
+
 ## Gate 2 — motion
 
-- `node scripts/mascots/validate-frames.mjs ...` must PASS (paste the output).
-- Build an inline HTML preview: embed the pack's pixel maps in a canvas, port
-  the component's timings (idle bob 2.2s, blink random, walk 180ms swap ±4°
-  tilt, celebrate hop+squash, poke 550ms) and let the user click through
-  states. Timing changes go into BOTH the preview and the component.
+- Pixel: `node scripts/mascots/validate-frames.mjs ...` must PASS (paste the
+  output). Smooth: `node scripts/validate-smooth-frames.mjs ...` must PASS
+  (`npm ci` first — pinned rasterizer, repo-side). Checks it runs on a smooth
+  pack (ADR 0001):
+  1. files — every frame + `contact_sheet.png` + `manifest.json` exists
+  2. manifest — names the pack, canvas, all frames in pack order, pinned
+     rasterizer version
+  3. dimensions — every frame PNG is the pack's square canvas
+  4. alpha — every opaque pixel lies inside the pack's `silhouette()` union
+     mask (no stray pixels or anti-aliasing artifacts outside the character)
+  5. silhouette — every frame has a substantial opaque body
+  6. registration — every frame differs from the base frame by ≥200 px (same
+     character, not a duplicate render)
+  7. determinism — re-rendering reproduces every file byte-for-byte
+- Build an inline HTML preview: embed the pack's pixel maps in a canvas (or
+  the smooth frames as data-URL PNGs), port the component's timings (idle bob
+  2.2s, blink random, walk 180ms swap ±4° tilt, celebrate hop+squash, poke
+  550ms) and let the user click through states. Timing changes go into BOTH
+  the preview and the component.
 
 ## Gate 3 — device (iOS simulator protocol)
 

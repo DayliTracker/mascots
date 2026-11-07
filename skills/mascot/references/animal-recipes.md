@@ -4,6 +4,12 @@ Sources: Slynyrd Pixelblog 25 (motion cycles), Saint11/Pedro Medeiros tutorials,
 chibi/super-deformed proportion convention. These recipes are starting points —
 the contact-sheet critique loop decides cuteness, not the recipe.
 
+The proportions, stamp order, and per-species recipes apply to BOTH pack
+kinds: on a pixel pack a "stamp" is art rows; on a smooth pack (ADR 0001) the
+same shapes are parametric SVG paths/ellipses (craft.md → "Smooth craft").
+Parts that break the silhouette need the outline pass on pixel and a
+silhouette()-mask entry on smooth.
+
 ## Universal proportions
 
 - Head-body is ONE blob: the head is ~40–50% of total height (super-deformed

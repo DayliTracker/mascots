@@ -1,0 +1,30 @@
+kind selection
+  ✓ scaffold with no --kind exits 0
+  ✓ scaffold writes packs/qa-default.mjs
+  ✓ default kind is smooth (flagship per ADR 0001)
+  ✓ --kind smooth exits 0
+  ✓ --kind smooth starter references the smooth engine
+  ✓ --kind pixel exits 0
+  ✓ --kind pixel starter is a 25-grid pixel pack
+refusals (usage, taken name, bad kind)
+  ✓ missing name exits 2 with usage
+  ✓ invalid name exits 2
+  ✓ existing pack name exits 1
+  ✓ unknown kind exits 2
+  ✗ missing --kind value exits 2 — exit 0, want 2
+Wrote /private/var/folders/rl/dqkc_c0j01567h1rttvfw7yh0000gn/T/mascots-test-new-pack-HMDVmu/kind-a/packs/qa-y.mjs
+Next: node smooth-engine.mjs packs/qa-y.mjs --out /tmp/qa-y
+Then: node validate-smooth-frames.mjs packs/qa-y.mjs --out /tmp/qa-y
+determinism (per-name seed)
+  ✓ same name scaffolds byte-identically in a fresh dir
+  ✓ different name or kind scaffolds differently
+pixel starter passes its validator as-is (fresh render, zero deps)
+  ✓ pixel starter renders with engine.mjs
+  ✓ pixel starter passes validate-frames.mjs as-is
+smooth starter passes its validator as-is (pinned rasterizer)
+  ✓ smooth starter renders with smooth-engine.mjs
+  ✓ smooth starter passes validate-smooth-frames.mjs as-is
+temp-dir cleanup
+  ✓ no mascots-test-new-pack-* temp dirs left behind
+
+FAIL — 18/19 checks

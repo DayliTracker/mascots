@@ -1,6 +1,13 @@
 # Pipeline — vendoring, pack anatomy, engine CLI
 
+Two pack kinds share one pipeline (ADR 0001): **pixel** packs render inside
+the app repo from the vendored zero-dep engine; **smooth** packs (flagship)
+render in the mascots repo from hand-authored SVG and ship PNG frames to the
+app. SKILL.md → "Pack kinds" has the choice table.
+
 ## Target-app layout (what a `/mascot` run adds)
+
+Pixel pack — everything renders in the app:
 
 ```
 <app>/
@@ -12,6 +19,18 @@
 ├── components/PixelPet.tsx     # vendored animator
 ├── components/pets.ts          # registry: which packs exist, their frame sources
 ├── assets/mascots/<animal>/    # generated PNGs (commit them)
+└── docs/mascots/<animal>/      # contact sheet + qa/ screenshots (evidence)
+```
+
+Smooth pack — the pack module lives in the mascots repo
+(`skills/mascot/scripts/packs/<animal>.mjs`), renders there, and the app gets
+only the artifacts:
+
+```
+<app>/
+├── components/PixelPet.tsx     # vendored animator (same as pixel)
+├── components/pets.ts          # registry (same as pixel)
+├── assets/mascots/<animal>/    # <animal>_<frame>.png + manifest.json (committed)
 └── docs/mascots/<animal>/      # contact sheet + qa/ screenshots (evidence)
 ```
 
@@ -29,6 +48,12 @@ cp "$(dirname "$SKILL_DIR")/../react-native/PixelPet.tsx" <app>/components/
 
 If the app already has a `scripts/mascots/engine.mjs`, do NOT overwrite it with
 an older/newer copy silently — diff first and tell the user what changed.
+
+The scaffolder `scripts/new-pack.mjs` is not vendored — it runs from
+`$SKILL_DIR/scripts/` and always writes `scripts/packs/<animal>.mjs` next to
+itself. Smooth packs scaffold straight into the mascots repo; for a pixel
+pack, copy the scaffolded file into `<app>/scripts/mascots/packs/` before
+rendering with the vendored engine.
 
 ## Pack anatomy
 
@@ -94,9 +119,20 @@ Flagship packs are smooth: hand-authored SVG per frame, rasterized at build
 time by a pinned rasterizer. Apps still consume plain PNG frames — the
 rasterizer never ships to a consuming app.
 
-- Pack module: `scripts/packs/<animal>.mjs` exporting `kind: 'smooth'`,
-  `size` (square canvas), `sheet` knobs, `frames: {name: opts}`, `frame(opts)`
-  (inner SVG in the pack's user space), and `silhouette()` (union mask).
+- Pack module: `skills/mascot/scripts/packs/<animal>.mjs` (this repo)
+  exporting `kind: 'smooth'`, `name`, `size` (square canvas), `sheet` knobs,
+  `frames: {name: opts}`, `frame(opts)` (inner SVG in the pack's user space),
+  and `silhouette()` (union mask).
+- Scaffold: `node scripts/new-pack.mjs <animal> --kind smooth` — an
+  ellipse-bodied starter whose shapes all sit inside the body, so the starter
+  passes `validate-smooth-frames.mjs` as-is. Replace the TODO regions; any
+  part that breaks the body edge (ears, tail, wings) must be added to
+  `silhouette()` too.
+- Anatomy: `frame(opts)` returns ONE frame's inner SVG in the pack's
+  `size × size` user space; `frames` maps the 7 state names to opts (idle
+  first — the validator diffs against it); `silhouette()` returns the union
+  of every shape any frame can draw, inflated by a round stroke (16px on the
+  duck ≈ 8px outward pad) so anti-aliased edges stay inside the mask.
 - Rasterizer: `@resvg/resvg-js`, exact-pinned in the mascots repo's root
   `package.json` — a build-time dependency of this repo only. Frame SVGs
   contain no `<text>` and the engine sets `loadSystemFonts: false`, so no
@@ -110,8 +146,8 @@ rasterizer never ships to a consuming app.
   rasterizer version — no timestamps).
 - Validator: `scripts/validate-smooth-frames.mjs` — frame presence, manifest
   sanity, canvas size, alpha outside the silhouette mask (no stray pixels),
-  frames differ from the base frame, and byte-determinism. No palette lock:
-  there is no cell grid.
+  frames differ from the base frame (≥200 px), and byte-determinism. No
+  palette lock: there is no cell grid.
 
 ```bash
 npm ci   # pinned rasterizer (repo-side; apps never need this)

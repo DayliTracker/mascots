@@ -1,5 +1,10 @@
 # App integration — PixelPet, progress mapping, switcher
 
+PixelPet animates PNG frames and never knows how they were made — pixel and
+smooth packs (ADR 0001) wire identically: a smooth pack ships the same
+`<animal>_<frame>.png` set (plus `manifest.json`) into
+`assets/mascots/<animal>/`, and everything below applies unchanged.
+
 ## PixelPet props
 
 ```tsx
