@@ -1,0 +1,15 @@
+fresh clone (no render state)
+  ✓ clone has no rendered frames in the pack dir
+  ✓ bare validate-frames exits 0 on a fresh clone (issue #7 AC1)
+  ✓ bare validate-frames is repeatable (no state left behind)
+  ✓ engine --out exits 0 on a fresh clone (verify_commands[0])
+explicit --out paths (pre-existing behaviour)
+  ✓ validate --out <dir with frames> exits 0
+  ✓ validate --out <empty dir> still exits 1 (missing files)
+partial frame state must not be silently re-rendered
+  ✓ bare validate with some frames present still exits 1
+temp-dir cleanup
+  ✓ no mascots-validate-* temp dirs left behind
+
+PASS — 8/8 checks
+suite_exit=0
