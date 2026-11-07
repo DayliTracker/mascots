@@ -1,0 +1,7 @@
+== AC3: ADR committed on issue branch (PR #6 head) ==
+EXISTS at HEAD
+7482786 📝 [docs] adr: adopt smooth art over pixel art for the flagship mascot
+-- changed vs origin/main (AC5 too):
+docs/adr/0001-smooth-art-over-pixel-art.md
+-- duck pack unchanged:
+       0
