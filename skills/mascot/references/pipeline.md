@@ -88,6 +88,38 @@ palette lock (every opaque pixel is a pack color), non-empty silhouette, frame
 registration (every frame 80–100% pixel-identical to the base frame — same
 character, but not a duplicate), and determinism (re-render byte-compares).
 
+## Smooth packs (ADR 0001)
+
+Flagship packs are smooth: hand-authored SVG per frame, rasterized at build
+time by a pinned rasterizer. Apps still consume plain PNG frames — the
+rasterizer never ships to a consuming app.
+
+- Pack module: `scripts/packs/<animal>.mjs` exporting `kind: 'smooth'`,
+  `size` (square canvas), `sheet` knobs, `frames: {name: opts}`, `frame(opts)`
+  (inner SVG in the pack's user space), and `silhouette()` (union mask).
+- Rasterizer: `@resvg/resvg-js`, exact-pinned in the mascots repo's root
+  `package.json` — a build-time dependency of this repo only. Frame SVGs
+  contain no `<text>` and the engine sets `loadSystemFonts: false`, so no
+  font metrics enter the pipeline: a pinned version renders byte-for-byte
+  identical PNGs on every machine.
+- Engine: `scripts/smooth-engine.mjs` renders each frame, a `contact_sheet.png`
+  for art review, and a deterministic `manifest.json` (frame list, canvas,
+  rasterizer version — no timestamps).
+- Validator: `scripts/validate-smooth-frames.mjs` — frame presence, manifest
+  sanity, canvas size, alpha outside the silhouette mask (no stray pixels),
+  frames differ from the base frame, and byte-determinism. No palette lock:
+  there is no cell grid.
+
+```bash
+npm ci   # pinned rasterizer (repo-side; apps never need this)
+
+# generate frames + contact sheet + manifest
+node scripts/smooth-engine.mjs scripts/packs/<animal>.mjs --out <dir>
+
+# delivery gate — must PASS before wiring or QA
+node scripts/validate-smooth-frames.mjs scripts/packs/<animal>.mjs --out <dir>
+```
+
 ## Rules
 
 - Changing art = edit the pack, re-run engine + validator. NEVER retouch PNGs.
