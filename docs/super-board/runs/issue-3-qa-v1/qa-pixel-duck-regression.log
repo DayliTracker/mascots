@@ -1,0 +1,38 @@
+$ node skills/mascot/scripts/engine.mjs skills/mascot/scripts/packs/duck.mjs --out /tmp/issue-3-qa-pixel  (PR head e5c0892)
+Wrote 10 files to /tmp/issue-3-qa-pixel
+$ <same engine from origin/main extract>
+  Wrote 10 files (captured earlier this session)
+
+$ diff -r <main output> <e5c0892 output>
+no differences — 10/10 files byte-identical to origin/main
+
+$ node skills/mascot/scripts/validate-frames.mjs skills/mascot/scripts/packs/duck.mjs --out /tmp/issue-3-qa-pixel
+files
+  ✓ duck_idle.png
+  ✓ duck_blink.png
+  ✓ duck_look.png
+  ✓ duck_walk_a.png
+  ✓ duck_walk_b.png
+  ✓ duck_happy.png
+  ✓ duck_surprised.png
+  ✓ particle_star.png
+  ✓ particle_heart.png
+  ✓ contact_sheet.png
+dimensions + palette lock + silhouette + registration
+  ✓ duck_idle.png: 500x500
+  ✓ duck_blink.png: 500x500
+  ✓ duck_look.png: 500x500
+  ✓ duck_walk_a.png: 500x500
+  ✓ duck_walk_b.png: 500x500
+  ✓ duck_happy.png: 500x500
+  ✓ duck_surprised.png: 500x500
+  ✓ duck_blink.png: 94.0% shared with duck_idle.png
+  ✓ duck_look.png: 95.4% shared with duck_idle.png
+  ✓ duck_walk_a.png: 94.8% shared with duck_idle.png
+  ✓ duck_walk_b.png: 97.1% shared with duck_idle.png
+  ✓ duck_happy.png: 84.3% shared with duck_idle.png
+  ✓ duck_surprised.png: 88.4% shared with duck_idle.png
+determinism (re-render byte-compare)
+  ✓ all files reproduce byte-for-byte
+
+PASS — 0 problem(s)
