@@ -1,0 +1,40 @@
+### T4.1 git diff origin/main...HEAD — engine, pixel validator, packs/
+diff bytes: 0
+
+### T4.2a config verify_command 1 — engine.mjs duck render
+Wrote 10 files to /tmp/check-branch
+exit=0
+
+### T4.2b config verify_command 2 — validate-frames.mjs duck
+no frames in /Users/gauwan/Codespaces/mascots/.claude/worktrees/issue-1-qa/skills/mascot/scripts/packs — validating a fresh render of the pack
+
+files
+  ✓ duck_idle.png
+  ✓ duck_blink.png
+  ✓ duck_look.png
+  ✓ duck_walk_a.png
+  ✓ duck_walk_b.png
+  ✓ duck_happy.png
+  ✓ duck_surprised.png
+  ✓ particle_star.png
+  ✓ particle_heart.png
+  ✓ contact_sheet.png
+dimensions + palette lock + silhouette + registration
+  ✓ duck_idle.png: 500x500
+  ✓ duck_blink.png: 500x500
+  ✓ duck_look.png: 500x500
+  ✓ duck_walk_a.png: 500x500
+  ✓ duck_walk_b.png: 500x500
+  ✓ duck_happy.png: 500x500
+  ✓ duck_surprised.png: 500x500
+  ✓ duck_blink.png: 94.0% shared with duck_idle.png
+  ✓ duck_look.png: 95.4% shared with duck_idle.png
+  ✓ duck_walk_a.png: 94.8% shared with duck_idle.png
+  ✓ duck_walk_b.png: 97.1% shared with duck_idle.png
+  ✓ duck_happy.png: 84.3% shared with duck_idle.png
+  ✓ duck_surprised.png: 88.4% shared with duck_idle.png
+determinism (re-render byte-compare)
+  ✓ all files reproduce byte-for-byte
+
+PASS — 0 problem(s)
+exit=0

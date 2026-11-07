@@ -1,0 +1,43 @@
+### T3.5a render pixel starter (engine.mjs)
+Wrote 10 files to /tmp/qa-render-pixel
+exit=0
+
+### T3.5b validate pixel starter as-is
+no frames in /Users/gauwan/Codespaces/mascots/.claude/worktrees/issue-1-qa/skills/mascot/scripts/packs — validating a fresh render of the pack
+
+files
+  ✓ qa-pixel_idle.png
+  ✓ qa-pixel_blink.png
+  ✓ qa-pixel_look.png
+  ✓ qa-pixel_walk_a.png
+  ✓ qa-pixel_walk_b.png
+  ✓ qa-pixel_happy.png
+  ✓ qa-pixel_surprised.png
+  ✓ particle_star.png
+  ✓ particle_heart.png
+  ✓ contact_sheet.png
+dimensions + palette lock + silhouette + registration
+  ✓ qa-pixel_idle.png: 500x500
+  ✓ qa-pixel_blink.png: 500x500
+  ✓ qa-pixel_look.png: 500x500
+  ✓ qa-pixel_walk_a.png: 500x500
+  ✓ qa-pixel_walk_b.png: 500x500
+  ✓ qa-pixel_happy.png: 500x500
+  ✓ qa-pixel_surprised.png: 500x500
+  ✓ qa-pixel_blink.png: 93.9% shared with qa-pixel_idle.png
+  ✓ qa-pixel_look.png: 95.2% shared with qa-pixel_idle.png
+  ✓ qa-pixel_walk_a.png: 94.7% shared with qa-pixel_idle.png
+  ✓ qa-pixel_walk_b.png: 97.0% shared with qa-pixel_idle.png
+  ✓ qa-pixel_happy.png: 83.6% shared with qa-pixel_idle.png
+  ✓ qa-pixel_surprised.png: 88.1% shared with qa-pixel_idle.png
+determinism (re-render byte-compare)
+  ✓ all files reproduce byte-for-byte
+
+PASS — 0 problem(s)
+exit=0
+
+### T3.2b validate default-kind (qa-default, smooth) as-is
+  ✓ all files reproduce byte-for-byte
+
+PASS — 0 problem(s)
+exit=0

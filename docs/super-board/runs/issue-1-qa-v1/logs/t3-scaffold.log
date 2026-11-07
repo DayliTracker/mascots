@@ -1,0 +1,18 @@
+### T3.1 scaffold smooth (explicit kind)
+Wrote /Users/gauwan/Codespaces/mascots/.claude/worktrees/issue-1-qa/skills/mascot/scripts/packs/qa-smooth.mjs
+Next: node smooth-engine.mjs packs/qa-smooth.mjs --out /tmp/qa-smooth
+Then: node validate-smooth-frames.mjs packs/qa-smooth.mjs --out /tmp/qa-smooth
+exit=0
+
+### T3.2 scaffold default kind (no --kind)
+Wrote /Users/gauwan/Codespaces/mascots/.claude/worktrees/issue-1-qa/skills/mascot/scripts/packs/qa-default.mjs
+Next: node smooth-engine.mjs packs/qa-default.mjs --out /tmp/qa-default
+Then: node validate-smooth-frames.mjs packs/qa-default.mjs --out /tmp/qa-default
+exit=0
+kind line:   kind: 'smooth',
+
+### T3.5 scaffold pixel
+Wrote /Users/gauwan/Codespaces/mascots/.claude/worktrees/issue-1-qa/skills/mascot/scripts/packs/qa-pixel.mjs
+Next: node engine.mjs packs/qa-pixel.mjs --out /tmp/qa-pixel
+Then: node validate-frames.mjs packs/qa-pixel.mjs --out /tmp/qa-pixel
+exit=0

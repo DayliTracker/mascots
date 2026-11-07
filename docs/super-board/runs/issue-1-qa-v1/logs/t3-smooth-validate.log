@@ -1,0 +1,49 @@
+### T3.3 render smooth starter (smooth-engine.mjs)
+Wrote 9 files to /tmp/qa-render-smooth
+exit=0
+
+### T3.4 validate smooth starter as-is (fresh render, no --out)
+no frames in /Users/gauwan/Codespaces/mascots/.claude/worktrees/issue-1-qa/skills/mascot/scripts/packs — validating a fresh render of the pack
+
+files
+  ✓ qa-smooth_idle.png
+  ✓ qa-smooth_blink.png
+  ✓ qa-smooth_look.png
+  ✓ qa-smooth_walk_a.png
+  ✓ qa-smooth_walk_b.png
+  ✓ qa-smooth_happy.png
+  ✓ qa-smooth_surprised.png
+  ✓ contact_sheet.png
+  ✓ manifest.json
+manifest
+  ✓ pack: qa-smooth
+  ✓ canvas: 512
+  ✓ frames: 7 in pack order
+  ✓ rasterizer: @resvg/resvg-js@2.6.2 (pinned)
+dimensions + alpha outside silhouette
+  ✓ qa-smooth_idle.png: 512x512
+  ✓ qa-smooth_idle.png: alpha inside silhouette (85290 opaque px)
+  ✓ qa-smooth_blink.png: 512x512
+  ✓ qa-smooth_blink.png: alpha inside silhouette (85290 opaque px)
+  ✓ qa-smooth_look.png: 512x512
+  ✓ qa-smooth_look.png: alpha inside silhouette (85290 opaque px)
+  ✓ qa-smooth_walk_a.png: 512x512
+  ✓ qa-smooth_walk_a.png: alpha inside silhouette (85344 opaque px)
+  ✓ qa-smooth_walk_b.png: 512x512
+  ✓ qa-smooth_walk_b.png: alpha inside silhouette (85344 opaque px)
+  ✓ qa-smooth_happy.png: 512x512
+  ✓ qa-smooth_happy.png: alpha inside silhouette (85290 opaque px)
+  ✓ qa-smooth_surprised.png: 512x512
+  ✓ qa-smooth_surprised.png: alpha inside silhouette (85290 opaque px)
+registration (frames differ from the base frame)
+  ✓ qa-smooth_blink.png: 1744 px differ from qa-smooth_idle.png
+  ✓ qa-smooth_look.png: 2618 px differ from qa-smooth_idle.png
+  ✓ qa-smooth_walk_a.png: 1964 px differ from qa-smooth_idle.png
+  ✓ qa-smooth_walk_b.png: 1964 px differ from qa-smooth_idle.png
+  ✓ qa-smooth_happy.png: 2750 px differ from qa-smooth_idle.png
+  ✓ qa-smooth_surprised.png: 4788 px differ from qa-smooth_idle.png
+determinism (re-render byte-compare)
+  ✓ all files reproduce byte-for-byte
+
+PASS — 0 problem(s)
+exit=0

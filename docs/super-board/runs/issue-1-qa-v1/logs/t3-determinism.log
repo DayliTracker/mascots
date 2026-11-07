@@ -1,0 +1,4 @@
+### T3.7 determinism — same name scaffolded twice in fresh dirs
+f23559550b341ade7a446bd58c7b209b332fe598bd27357f3396fcedba399f74  /tmp/qa-det-a/packs/det-check.mjs
+f23559550b341ade7a446bd58c7b209b332fe598bd27357f3396fcedba399f74  /tmp/qa-det-b/packs/det-check.mjs
+IDENTICAL: yes
