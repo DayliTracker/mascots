@@ -100,8 +100,11 @@ rasterizer never ships to a consuming app.
 - Rasterizer: `@resvg/resvg-js`, exact-pinned in the mascots repo's root
   `package.json` — a build-time dependency of this repo only. Frame SVGs
   contain no `<text>` and the engine sets `loadSystemFonts: false`, so no
-  font metrics enter the pipeline: a pinned version renders byte-for-byte
-  identical PNGs on every machine.
+  font metrics enter the pipeline. Same-machine byte-identity is proven:
+  two independent renders byte-compare equal, and the validator re-renders
+  and byte-compares on every exit. Cross-machine identity rests on design —
+  the exact pin, no `<text>`, no system fonts, no timestamps — a same-machine
+  diff does not prove it.
 - Engine: `scripts/smooth-engine.mjs` renders each frame, a `contact_sheet.png`
   for art review, and a deterministic `manifest.json` (frame list, canvas,
   rasterizer version — no timestamps).
