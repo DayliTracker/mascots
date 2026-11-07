@@ -1,0 +1,5 @@
+$ gh issue view 30 -R DayliTracker/dayli-step-tracker --json number,title,state,closed
+{"closed":true,"number":30,"state":"CLOSED","title":"✨ [feature] mascot: swap to the 48px sprite pack"}
+
+$ supersede comment 6666322726 (2026-11-05T18:46:45Z):
+**[orchestrator]** Superseded (2026-11-06): the smooth-art duck shipped directly via #45/PR #46 (squash dbe1d3f) under the prototype-parity directive — the app now renders the smooth frame set, and the 48px pixel class this ticket pointed at is shelved in the mascots repo (see #37, mascots ADR 0001). Closing as superseded.

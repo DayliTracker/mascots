@@ -1,0 +1,6 @@
+$ git rev-list --left-right --count main...origin/main
+0	0
+
+$ git rev-parse main origin/main
+a9ab92dc0f0dd90c993a2b3042906fa66a17df42
+a9ab92dc0f0dd90c993a2b3042906fa66a17df42

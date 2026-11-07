@@ -1,0 +1,10 @@
+PASS  AC1 wip/48px-class exists on remote at 325087d57a43aaad00e03d28b1ae74bb5efcb831
+PASS  AC1 branch tip is the duck48 WIP commit 325087d57a43aaad00e03d28b1ae74bb5efcb831
+PASS  AC1 branch contains all 4 stranded commits past 52cfe78f4f96d1ab1d7ec279042b33e9d4abffaf
+PASS  AC2 local main equals origin/main (0 ahead, 0 behind)
+PASS  AC2 both refs at a9ab92d
+PASS  AC3 ADR 0001 committed at HEAD (9bc654b) — lands on main at squash merge
+PASS  AC5 duck pack + engine byte-identical to a9ab92d
+PASS  AC5 branch diff adds no code — every changed file is under docs/ (no dayli paths)
+---
+8 passed, 0 failed
