@@ -1,0 +1,45 @@
+== test-the-tests: mutated pack (stray 6px blob at 492,492 outside silhouette) must FAIL ==
+no frames in /private/tmp/qa4-mutation — validating a fresh render of the pack
+
+files
+  ✓ smooth-duck_idle.png
+  ✓ smooth-duck_blink.png
+  ✓ smooth-duck_look.png
+  ✓ smooth-duck_walk_a.png
+  ✓ smooth-duck_walk_b.png
+  ✓ smooth-duck_happy.png
+  ✓ smooth-duck_surprised.png
+  ✓ contact_sheet.png
+  ✓ manifest.json
+manifest
+  ✓ pack: smooth-duck
+  ✓ canvas: 512
+  ✓ frames: 7 in pack order
+  ✓ rasterizer: @resvg/resvg-js@2.6.2 (pinned)
+dimensions + alpha outside silhouette
+  ✓ smooth-duck_idle.png: 512x512
+  ✗ smooth-duck_idle.png: 124 opaque pixels outside the silhouette
+  ✓ smooth-duck_blink.png: 512x512
+  ✗ smooth-duck_blink.png: 124 opaque pixels outside the silhouette
+  ✓ smooth-duck_look.png: 512x512
+  ✗ smooth-duck_look.png: 124 opaque pixels outside the silhouette
+  ✓ smooth-duck_walk_a.png: 512x512
+  ✗ smooth-duck_walk_a.png: 124 opaque pixels outside the silhouette
+  ✓ smooth-duck_walk_b.png: 512x512
+  ✗ smooth-duck_walk_b.png: 124 opaque pixels outside the silhouette
+  ✓ smooth-duck_happy.png: 512x512
+  ✗ smooth-duck_happy.png: 124 opaque pixels outside the silhouette
+  ✓ smooth-duck_surprised.png: 512x512
+  ✗ smooth-duck_surprised.png: 124 opaque pixels outside the silhouette
+registration (frames differ from the base frame)
+  ✓ smooth-duck_blink.png: 1744 px differ from smooth-duck_idle.png
+  ✓ smooth-duck_look.png: 2682 px differ from smooth-duck_idle.png
+  ✓ smooth-duck_walk_a.png: 2928 px differ from smooth-duck_idle.png
+  ✓ smooth-duck_walk_b.png: 2928 px differ from smooth-duck_idle.png
+  ✓ smooth-duck_happy.png: 14425 px differ from smooth-duck_idle.png
+  ✓ smooth-duck_surprised.png: 6349 px differ from smooth-duck_idle.png
+determinism (re-render byte-compare)
+  ✓ all files reproduce byte-for-byte
+
+FAIL — 7 problem(s)
+mutation validator exit: 1  (1 = gate correctly red)

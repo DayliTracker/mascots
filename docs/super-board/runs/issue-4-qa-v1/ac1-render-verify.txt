@@ -1,0 +1,21 @@
+# issue-4 QA v1 evidence — captured 2026-11-07T14:27:00Z @ head 35e879e1972bd1947b31e8de50e45b50720aad8a
+host: node v22.14.0, darwin arm64
+
+== AC1: render smooth-duck to a fresh dir ==
+Wrote 9 files to /private/tmp/qa4-ev-render-a
+render exit: 0
+
+== AC1: observable verify (manifest order, 512x512, pairwise distinct) ==
+ok   manifest pack=smooth-duck canvas=512 rasterizer=@resvg/resvg-js@2.6.2
+ok   manifest frames in 7-frame contract order: idle, blink, look, walk_a, walk_b, happy, surprised
+ok   smooth-duck_idle.png: 512x512
+ok   smooth-duck_blink.png: 512x512
+ok   smooth-duck_look.png: 512x512
+ok   smooth-duck_walk_a.png: 512x512
+ok   smooth-duck_walk_b.png: 512x512
+ok   smooth-duck_happy.png: 512x512
+ok   smooth-duck_surprised.png: 512x512
+ok   all 7 frames pairwise byte-distinct
+
+VERIFY PASS — 0 failure(s), 9 files
+verify exit: 0

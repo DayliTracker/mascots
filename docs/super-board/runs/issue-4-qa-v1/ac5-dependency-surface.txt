@@ -1,0 +1,34 @@
+== AC5: rasterizer is a devDependency of this repo only ==
+--- package.json (dependencies key absent):
+{
+  "name": "mascots",
+  "private": true,
+  "type": "module",
+  "description": "Animated mascots for agent-built apps — build-time frame pipeline (apps consume PNG frames only)",
+  "scripts": {
+    "smooth-duck": "node skills/mascot/scripts/smooth-engine.mjs skills/mascot/scripts/packs/smooth-duck.mjs",
+    "verify:smooth-duck": "node skills/mascot/scripts/validate-smooth-frames.mjs skills/mascot/scripts/packs/smooth-duck.mjs"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "2.6.2"
+  }
+}
+
+--- files referencing @resvg/resvg-js (excluding node_modules + lockfile):
+./package.json
+./skills/mascot/references/pipeline.md
+./skills/mascot/scripts/smooth-engine.mjs
+./skills/mascot/scripts/validate-smooth-frames.mjs
+
+--- package.json anywhere under skills/ or examples/ (consuming surface):
+(none — skill ships no dependency)
+
+--- imports of the shipping pixel scripts (engine.mjs, validate-frames.mjs): node builtins only
+import { deflateSync, crc32 } from 'node:zlib';
+import { dirname, join, resolve } from 'node:path';
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { inflateSync } from 'node:zlib';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
+import { renderPack, hexToRgba } from './engine.mjs';
+import { tmpdir } from 'node:os';
