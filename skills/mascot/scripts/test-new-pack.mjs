@@ -57,10 +57,11 @@ try {
   const a = scriptsCopy('kind-a');
   const def = run(join(a, 'new-pack.mjs'), ['qa-default'], repoRoot);
   check('scaffold with no --kind exits 0', 0, def.code, def.out);
-  existsSync(join(a, 'packs', 'qa-default.mjs'))
+  const defWritten = existsSync(join(a, 'packs', 'qa-default.mjs'));
+  defWritten
     ? pass('scaffold writes packs/qa-default.mjs')
     : fail('scaffold writes packs/qa-default.mjs');
-  readFileSync(join(a, 'packs', 'qa-default.mjs'), 'utf8').includes("kind: 'smooth'")
+  defWritten && readFileSync(join(a, 'packs', 'qa-default.mjs'), 'utf8').includes("kind: 'smooth'")
     ? pass('default kind is smooth (flagship per ADR 0001)')
     : fail('default kind is smooth (flagship per ADR 0001)');
 
@@ -85,6 +86,8 @@ try {
   check('existing pack name exits 1', 1, taken.code, taken.out);
   const kind = run(join(a, 'new-pack.mjs'), ['qa-x', '--kind', 'bogus'], repoRoot);
   check('unknown kind exits 2', 2, kind.code, kind.out);
+  const novalue = run(join(a, 'new-pack.mjs'), ['qa-y', '--kind'], repoRoot);
+  check('missing --kind value exits 2', 2, novalue.code, novalue.out);
 
   console.log('determinism (per-name seed)');
   const b = scriptsCopy('kind-b');

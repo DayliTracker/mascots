@@ -1,0 +1,7 @@
+--- pixel starter render + validate (as scaffolded) ---
+Wrote 10 files to /tmp/qa-v2-pixel/render
+render exit 0
+  ✓ all files reproduce byte-for-byte
+
+PASS — 0 problem(s)
+validate exit 0
