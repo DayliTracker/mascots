@@ -5,42 +5,38 @@
 // Same character as the pixel duck (packs/duck.mjs): chibi duckling, egg body,
 // wide bill, mint scarf, stub wings, tuft.
 //
-// Gate-1 polish pass 1 (issue #3) — geometry measured against the approved
-// prototype v6 duck (dayli-step-tracker `prototype/textless-shell`,
-// prototype-merged-shell.html, 120×120 user space) and the re-fetched Habita
-// references (get-habita.app Sprout/Lumi). Relationships applied (measured,
-// no reference pixels copied):
-//   · warm-brown outline #5B4634 on every shape (prototype stroke; Habita
-//     outline ≈ 3% of character width)
-//   · radial-gradient body, light top-left (prototype body fill)
-//   · face low-set: eye line ≈ half-way down the head mass (Habita eyes sit
-//     ~55–78% down the head), eye spacing ≈ 40% of head width
-//   · blush round, below-outside the eyes (Habita: blush centers sit outside
-//     by ~6% and below the eye line; prototype: 30 left/right, 40 below at
-//     512 scale)
-//   · scarf = smile-band snug under the face + hanging tail on the front-left
-//     (prototype band + rotated-rect tail; Habita front-left hang)
-//   · small rounded-rect feet tucked under the body (prototype 13×8.5 r4.2
-//     → 55×36 r17 at 512 scale)
-//   · tuft = one stroke curl (prototype), tail curl on the right (prototype)
-//   · subtle shading: one soft belly ellipse, no heavy bottom bands
+// Prototype-match pass (user verdict 2026-11-09, on PR #12): the shipped art
+// must look like the approved prototype v6 strip (dayli-step-tracker
+// `prototype/textless-shell`), re-measured pixel-by-pixel from the strip:
+//   · NO outline anywhere — shapes read by color contrast only (the prototype
+//     has no rim; the earlier Habita-derived #5B4634 stroke is gone)
+//   · body: linear vertical gradient #FFF6E3 → #E4CD9F over y 98→440
+//     (prototype top/bottom samples; the radial near-white blend was flat)
+//   · collar: full-width smile-band snug under the bill (y≈263 top), light
+//     mint #B7E0CC with a dark-mint #8FCBB2 strip along its lower edge
+//   · scarf tail: slim two-tone drape (dark edge + light face) hanging
+//     front-right below the collar — prototype hangs right, not left
+//   · tuft: two filled leaf lobes (pale left, tan right), not a stroked curl
+//   · wings: flat tan #E4CD9F, a step darker than the local body, no highlight
+//   · belly: one soft #F2E2C4 ellipse centered ~y 337 under the collar
+//   · no right-hip tail curl — the prototype's hip is plain gradient
+//   · bills shortened to end y≈258-260, snug above the collar (prototype);
+//     surprised mouth = orange upper + dark interior
 //
-// Compose order: body → shading → wings → tail → feet → tuft → scarf band →
-// scarf tail → blush → bill → eyes last (on top).
+// Compose order: body → belly → wings → feet → tuft → scarf tail → collar →
+// blush → bill → eyes last (on top).
 
 const C = {
-  body: '#FFF6E3', // cream
-  bodyHi: '#FFFAEE', // gradient core (top-left light)
-  bodyLo: '#F3E7CE', // gradient edge (warm rim)
-  soft: '#F2E2C4', // soft shade (wings, belly, tail)
+  body: '#FFF6E3', // cream (gradient top)
+  bodyLo: '#E4CD9F', // warm tan (gradient bottom, wings, tuft right lobe)
+  soft: '#F2E2C4', // soft shade (belly patch, tuft left lobe)
   bill: '#F6A94C', // bill / feet
   billShade: '#D9832E', // bill / feet shade, mouth line
   blush: '#F5BFAE', // blush
   eye: '#40342B', // eyes / mouth interior
   glint: '#FFFFFF', // glints
-  scarf: '#B7E0CC', // scarf mint
-  scarfShade: '#8FCBB2', // scarf mint shade (hanging tail)
-  o: '#5B4634', // outline, warm brown (prototype stroke color)
+  scarf: '#B7E0CC', // scarf mint (light face)
+  scarfShade: '#8FCBB2', // scarf mint shade (lower strip, tail edge)
 };
 
 // Egg body — slightly narrower top, fuller bottom. Center (256, ~270).
@@ -49,12 +45,12 @@ const BODY =
   'C 322 424 292 440 256 440 C 220 440 190 424 152 382 ' +
   'C 108 330 98 262 120 204 C 144 140 194 98 256 98 Z';
 
-// Prototype v6 tuft curl, mapped 120→512 (×4.267): one stroke flick.
+// Tuft: teardrop sprout tilted right on a pinched stalk (prototype: pale
+// face x≈251-268, tan right-shade x≈267-282, y 52-96), no outline.
 const TUFT =
-  'M 247 128 C 237 92 282 79 290 109 C 271 103 262 115 269 134';
-
-// Prototype v6 tail curl, mapped: pokes out over the right hip.
-const TAIL = 'M 358 307 C 397 316 405 358 375 388 C 354 371 346 333 358 307 Z';
+  'M 252 118 C 240 92 250 58 268 52 C 284 62 282 98 264 118 Z';
+const TUFT_SHADE =
+  'M 262 118 C 258 92 270 60 284 56 C 290 68 286 102 272 118 Z';
 
 const WING = {
   left:
@@ -64,19 +60,19 @@ const WING = {
     'M 336 300 C 364 300 384 318 384 342 C 384 362 366 374 346 368 ' +
     'C 332 363 326 348 330 330 C 333 316 332 302 336 300 Z',
 };
-// Happy: wings lift outward-up around the shoulder. SVG rotate() is clockwise
-// in the y-down space, so the left wing takes the positive angle.
-const WING_UP = {
-  left: { transform: 'rotate(48 176 300)' },
-  right: { transform: 'rotate(-48 336 300)' },
-};
-// Soft highlight along the top edge of each wing so it reads against the body.
-const WING_HIGHLIGHT = {
-  left: 'M 176 303 C 154 305 136 318 133 336 C 146 328 160 318 174 310 Z',
-  right: 'M 336 303 C 358 305 376 318 379 336 C 366 328 352 318 338 310 Z',
+// Happy: dedicated horizontal wing lobes stretched out at collar height
+// (prototype: tips reach ≈30px past the body edge, y≈280-330) — a rotated
+// hanging wing reads as a lump on the similarly-tan body.
+const WING_OUT = {
+  left:
+    'M 176 296 C 148 278 108 274 82 288 C 72 298 77 312 92 316 ' +
+    'C 120 322 158 316 176 308 Z',
+  right:
+    'M 336 296 C 364 278 404 274 430 288 C 440 298 435 312 420 316 ' +
+    'C 392 322 354 316 336 308 Z',
 };
 
-// Feet: small rounded rects (prototype 13×8.5 rx4.2 → 55×36 rx17). Tucked
+// Feet: small rounded rects (prototype 13×8.5 rx4.2 → 54×34 rx17). Tucked
 // under the body; walk_a = left foot forward/down; walk_b = right foot.
 function footRect(cx, cy) {
   return { x: cx - 27, y: cy - 17, w: 54, h: 34, rx: 17 };
@@ -88,39 +84,49 @@ const FEET = {
 };
 
 const SCARF = {
-  // Smile-band snug under the face, mapped from the prototype band.
+  // Full-width smile-band snug under the bill (prototype: top y≈263 mid,
+  // bottom y≈316 mid), drawn inside the body clip so it hugs the silhouette.
+  // Flat runs + corner turns (rounded-rect logic): the sides stay a steady
+  // light mint and the dark strip stays thin toward the edges.
   band:
-    'M 148 288 C 200 322 312 322 364 288 C 368 312 322 342 256 342 ' +
-    'C 190 342 144 312 148 288 Z',
-  // Hanging tail on the front-left: prototype rotated rect (44.8×68.3 r19.2,
-  // rotate 6°) mapped — rounded, short, hangs over the belly not the wing.
-  tailRect: { x: 160, y: 332, w: 46, h: 62, rx: 20, rot: 'rotate(6 183 363)' },
+    'M 96 272 C 160 258 352 258 416 272 L 416 302 ' +
+    'C 372 316 330 316 256 316 C 182 316 140 316 96 302 Z',
+  // Light face: same top edge, flat bottom at y≈304 with soft corners, so the
+  // dark underside strip reads ≈5px at the sides, ≈12px mid-bottom.
+  bandFace:
+    'M 96 272 C 160 258 352 258 416 272 L 416 296 ' +
+    'C 382 304 330 304 256 304 C 182 304 134 304 96 296 Z',
+  // Slim two-tone drape hanging front-right below the collar (prototype:
+  // dark edge x≈326-336, light face x≈338-348, tapering to a tip at y≈354).
+  tailDark: 'M 324 308 L 338 308 L 335 344 L 329 354 Z',
+  tailLight: 'M 337 308 L 351 308 L 347 342 L 341 352 Z',
 };
 
 const BLUSH = [
-  { cx: 170, cy: 240, rx: 20, ry: 13 },
-  { cx: 342, cy: 240, rx: 20, ry: 13 },
+  { cx: 152, cy: 234, rx: 15, ry: 12 },
+  { cx: 359, cy: 235, rx: 16, ry: 12 },
 ];
 
 function billClosed() {
   return (
-    `<path d="M 218 239 Q 256 222 294 239 Q 284 275 256 275 Q 228 275 218 239 Z" fill="${C.bill}" stroke="${C.o}" stroke-width="7" stroke-linejoin="round"/>` +
-    `<path d="M 232 254 Q 256 264 280 254" stroke="${C.billShade}" stroke-width="6" stroke-linecap="round" fill="none"/>`
+    `<path d="M 209 236 Q 256 200 303 236 Q 293 261 256 261 Q 219 261 209 236 Z" fill="${C.bill}"/>` +
+    `<path d="M 224 249 Q 256 259 288 249" stroke="${C.billShade}" stroke-width="6" stroke-linecap="round" fill="none"/>`
   );
 }
 
 function billSmile() {
   return (
-    `<path d="M 222 237 Q 256 226 290 237 Q 282 288 256 288 Q 230 288 222 237 Z" fill="${C.bill}" stroke="${C.o}" stroke-width="7" stroke-linejoin="round"/>` +
-    `<path d="M 235 262 Q 256 275 277 262" stroke="${C.billShade}" stroke-width="6" stroke-linecap="round" fill="none"/>`
+    `<path d="M 208 234 Q 256 204 304 234 Q 296 264 256 264 Q 216 264 208 234 Z" fill="${C.bill}"/>` +
+    `<path d="M 222 252 Q 256 265 290 252" stroke="${C.billShade}" stroke-width="6" stroke-linecap="round" fill="none"/>`
   );
 }
 
 function billOpen() {
-  // Small open "o" mouth (prototype surprised: outlined orange ellipse).
+  // Surprised: slim orange upper band (corners only) + broad dark open mouth
+  // that reaches y≈234 at center (prototype: orange x 214-294, dark ≈30×16).
   return (
-    `<ellipse cx="256" cy="258" rx="21" ry="24" fill="${C.bill}" stroke="${C.o}" stroke-width="7"/>` +
-    `<ellipse cx="256" cy="262" rx="10" ry="12" fill="${C.billShade}"/>`
+    `<ellipse cx="256" cy="231" rx="40" ry="9" fill="${C.bill}"/>` +
+    `<ellipse cx="256" cy="249" rx="30" ry="16" fill="${C.eye}"/>`
   );
 }
 
@@ -138,11 +144,13 @@ function eyesOpen(shift) {
 }
 
 function eyesWide() {
-  const one = (ex) =>
-    `<circle cx="${ex}" cy="200" r="26" fill="${C.glint}" stroke="${C.eye}" stroke-width="8"/>` +
-    `<circle cx="${ex}" cy="202" r="10" fill="${C.eye}"/>` +
-    `<circle cx="${ex - 4}" cy="196" r="3.5" fill="${C.glint}"/>`;
-  return one(200) + one(312);
+  // Prototype shocked eyes: round rings (outer ≈ r24), pupil r11 nudged
+  // toward the nose (measured ≈48×48 user units in the strip, both sides).
+  const one = (ex, dir) =>
+    `<circle cx="${ex}" cy="199" r="21" fill="${C.glint}" stroke="${C.eye}" stroke-width="6"/>` +
+    `<circle cx="${ex + 5 * dir}" cy="202" r="11" fill="${C.eye}"/>` +
+    `<circle cx="${ex + 5 * dir - 4}" cy="197" r="3" fill="${C.glint}"/>`;
+  return one(200, 1) + one(312, -1);
 }
 
 // Lid arcs: blink = shallow downward lid (∪), happy = deeper upward arc (∩) —
@@ -166,48 +174,37 @@ function frameSvg(o = {}) {
   const wings = o.wings ?? 'down';
   const feet = FEET[o.feet ?? 'stand'];
   const wing = (side) => {
-    const path = WING[side];
-    const up = wings === 'up' ? ` transform="${WING_UP[side].transform}"` : '';
-    return (
-      `<path d="${path}"${up} fill="${C.soft}" stroke="${C.o}" stroke-width="9" stroke-linejoin="round"/>` +
-      `<path d="${WING_HIGHLIGHT[side]}"${up} fill="${C.body}"/>`
-    );
+    const path = wings === 'up' ? WING_OUT[side] : WING[side];
+    return `<path d="${path}" fill="${C.bodyLo}"/>`;
   };
   const feetSvg = feet
-    .map(
-      (f) =>
-        `<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" rx="${f.rx}" fill="${C.bill}" stroke="${C.o}" stroke-width="7"/>`
-    )
+    .map((f) => `<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" rx="${f.rx}" fill="${C.bill}"/>`)
     .join('');
 
   return (
-    // body: radial gradient, top-left light (prototype body fill) + outline
-    `<defs><radialGradient id="dbody" cx="38%" cy="30%" r="78%">` +
-    `<stop offset="0%" stop-color="${C.bodyHi}"/>` +
-    `<stop offset="55%" stop-color="${C.body}"/>` +
+    // body: linear vertical gradient, cream top → warm tan bottom (prototype)
+    `<defs><linearGradient id="dbody" gradientUnits="userSpaceOnUse" ` +
+    `x1="256" y1="98" x2="256" y2="440">` +
+    `<stop offset="0%" stop-color="${C.body}"/>` +
     `<stop offset="100%" stop-color="${C.bodyLo}"/>` +
-    `</radialGradient></defs>` +
+    `</linearGradient></defs>` +
     `<clipPath id="bclip"><path d="${BODY}"/></clipPath>` +
-    `<path d="${BODY}" fill="url(#dbody)" stroke="${C.o}" stroke-width="11" stroke-linejoin="round"/>` +
-    // subtle belly shade (one soft ellipse, prototype-mapped)
-    `<g clip-path="url(#bclip)"><ellipse cx="256" cy="404" rx="82" ry="30" fill="${C.soft}"/></g>` +
-    // wings → tail → feet → tuft
+    `<path d="${BODY}" fill="url(#dbody)"/>` +
+    // soft belly patch under the collar (prototype-mapped)
+    `<g clip-path="url(#bclip)"><ellipse cx="256" cy="337" rx="82" ry="22" fill="${C.soft}"/></g>` +
+    // wings → feet → tuft
     wing('left') +
     wing('right') +
-    `<path d="${TAIL}" fill="${C.soft}" stroke="${C.o}" stroke-width="9" stroke-linejoin="round"/>` +
     feetSvg +
-    `<path d="${TUFT}" fill="none" stroke="${C.o}" stroke-width="9" stroke-linecap="round"/>` +
-    // scarf: band clipped to the body (wraps), outline; tail hangs front-left
+    `<path d="${TUFT}" fill="${C.soft}"/>` +
+    `<path d="${TUFT_SHADE}" fill="${C.bodyLo}"/>` +
+    // scarf tail (under the collar), then collar: dark band + light face
     `<g clip-path="url(#bclip)">` +
-    `<path d="${SCARF.band}" fill="${C.scarf}" stroke="${C.o}" stroke-width="9" stroke-linejoin="round"/>` +
+    `<path d="${SCARF.tailDark}" fill="${C.scarfShade}"/>` +
+    `<path d="${SCARF.tailLight}" fill="${C.scarf}"/>` +
+    `<path d="${SCARF.band}" fill="${C.scarfShade}"/>` +
+    `<path d="${SCARF.bandFace}" fill="${C.scarf}"/>` +
     `</g>` +
-    (() => {
-      const t = SCARF.tailRect;
-      return (
-        `<rect x="${t.x}" y="${t.y}" width="${t.w}" height="${t.h}" rx="${t.rx}" transform="${t.rot}" ` +
-        `fill="${C.scarfShade}" stroke="${C.o}" stroke-width="8" stroke-linejoin="round"/>`
-      );
-    })() +
     BLUSH.map(
       (b) =>
         `<ellipse cx="${b.cx}" cy="${b.cy}" rx="${b.rx}" ry="${b.ry}" fill="${C.blush}"/>`
@@ -224,26 +221,26 @@ function silhouetteSvg() {
   const shapes = [
     BODY,
     TUFT,
-    TAIL,
+    TUFT_SHADE,
     WING.left,
     WING.right,
+    WING_OUT.left,
+    WING_OUT.right,
     ...FEET.stand.concat(FEET.walkA, FEET.walkB).map(
       (f) => `M ${f.x} ${f.y} h ${f.w} v ${f.h} h ${-f.w} Z`
     ),
     SCARF.band,
-    `M ${SCARF.tailRect.x} ${SCARF.tailRect.y} h ${SCARF.tailRect.w} v ${SCARF.tailRect.h} h ${-SCARF.tailRect.w} Z`,
-    'M 218 239 Q 256 222 294 239 Q 284 275 256 275 Q 228 275 218 239 Z',
-    'M 222 237 Q 256 226 290 237 Q 282 288 256 288 Q 230 288 222 237 Z',
-    'M 232 254 Q 256 264 280 254',
-    'M 235 262 Q 256 275 277 262',
-    'M 235 258 a 21 24 0 1 0 42 0 a 21 24 0 1 0 -42 0 Z',
+    SCARF.tailDark,
+    SCARF.tailLight,
+    'M 209 236 Q 256 200 303 236 Q 293 261 256 261 Q 219 261 209 236 Z',
+    'M 208 234 Q 256 204 304 234 Q 296 264 256 264 Q 216 264 208 234 Z',
+    'M 224 249 Q 256 259 288 249',
+    'M 222 252 Q 256 265 290 252',
+    'M 216 231 a 40 9 0 1 0 80 0 a 40 9 0 1 0 -80 0 Z',
+    'M 226 249 a 30 16 0 1 0 60 0 a 30 16 0 1 0 -60 0 Z',
   ].filter((d) => typeof d === 'string');
   const paths = shapes.map((d) => `<path d="${d}"/>`).join('');
-  // rotated up-wings: reuse the wing paths inside transformed groups
-  const wingsUp =
-    `<g transform="${WING_UP.left.transform}"><path d="${WING.left}"/></g>` +
-    `<g transform="${WING_UP.right.transform}"><path d="${WING.right}"/></g>`;
-  return `<g fill="#000" stroke="#000" stroke-width="16" stroke-linejoin="round" stroke-linecap="round">${paths}${wingsUp}</g>`;
+  return `<g fill="#000" stroke="#000" stroke-width="16" stroke-linejoin="round" stroke-linecap="round">${paths}</g>`;
 }
 
 export default {
