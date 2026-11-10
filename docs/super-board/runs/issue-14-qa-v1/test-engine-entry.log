@@ -1,0 +1,10 @@
+engine via an absolute path through a symlinked dir (issue #14)
+  ✓ renders 10 files, exit 0
+engine via a direct absolute path (no symlink)
+  ✓ renders 10 files, exit 0
+engine via a relative path from the app root (SKILL.md GATE 1)
+  ✓ renders 10 files, exit 0
+importing engine.mjs must not render
+  ✓ exits 0, no render output
+
+PASS — 4/4 checks

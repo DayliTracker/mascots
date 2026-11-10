@@ -1,0 +1,9 @@
+# node vv22.23.4 — argv[1] vs import.meta.url (mechanism of the bug)
+
+$ node /tmp/probe-arg.mjs   (absolute path under symlinked /tmp)
+argv1 as typed: /tmp/probe-arg.mjs
+import.meta.url : file:///private/tmp/probe-arg.mjs
+
+$ cd /tmp && node probe-arg.mjs   (relative entry — node realpath-resolves argv[1] itself)
+argv1 as typed: /private/tmp/probe-arg.mjs
+import.meta.url : file:///private/tmp/probe-arg.mjs

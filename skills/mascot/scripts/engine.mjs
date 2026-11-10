@@ -15,7 +15,7 @@
 // particles to particle_<name>.png, and a contact_sheet.png for review.
 
 import { deflateSync, crc32 } from 'node:zlib';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, realpathSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -233,7 +233,10 @@ export async function renderPack(packPath, { out, seed } = {}) {
 }
 
 // CLI entry: node engine.mjs <pack.mjs> [--out dir] [--seed n]
-if (process.argv[1] && resolve(process.argv[1]) === import.meta.url.replace('file://', '')) {
+if (
+  process.argv[1] &&
+  pathToFileURL(realpathSync(process.argv[1])).href === import.meta.url
+) {
   const args = process.argv.slice(2);
   const packPath = args.find((a) => !a.startsWith('--'));
   const get = (flag) => {

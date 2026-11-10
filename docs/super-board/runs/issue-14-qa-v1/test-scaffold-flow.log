@@ -1,0 +1,7 @@
+documented scaffold flow (SKILL.md steps 2–5) in an app dir under a symlinked base
+  ✓ GATE 1 renders 10 files, exit 0
+  ✓ GATE 2 validate-frames PASS — 0 problem(s)
+entry path containing a space (percent-encoded URL round-trip)
+  ✓ renders 10 files, exit 0
+
+PASS — 3/3 checks
