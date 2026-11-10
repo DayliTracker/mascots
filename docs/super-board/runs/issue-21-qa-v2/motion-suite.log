@@ -1,0 +1,34 @@
+
+T1  AC1 — breath loop vs motion spec (A1 bounds/period, A2 volume)
+  ok  T1.1 spec constants: breath 2200 ms over [0.995, 1.015]
+  ok  T1.2 breath legs port the sine slice-by-slice: quarter + half + quarter = 2200 ms
+  ok  T1.3 breath runs in EVERY mood — its effect never gates on mood value
+  ok  T1.4 breath volume preserved: scaleX is the reciprocal through the exact-1 anchor (A2 ≤ 0.0005)
+  ok  T1.5 breath holds scaleY directly — rest value 1 renders exactly scale 1 (A13)
+
+T2  AC1 — sway + weight shift vs motion spec (A3–A5)
+  ok  T2.1 sway constants: 3400 ms, ±0.6° base, drift ±0.25° gliding 2 s on a 5–9 s cadence
+  ok  T2.2 sway loop is sine 0 → +0.6 → −0.6 → 0, ported per leg (quarter/half/quarter = 3400 ms)
+  ok  T2.3 drift is not a pure sine: cubic-glide retargets chained on a 5–9 s timer (A4)
+  ok  T2.4 weight shift constants: 4–7 s cadence, 550 ms move, ±2.5 px @170, tilt ±0.35°
+  ok  T2.5 weight moves are always visible: next slot never equals the current one (A5)
+  ok  T2.6 sway + weight are idle only — suspended during walk moods (loops table)
+
+T3  AC2 — native-driver discipline + transform composition
+  ok  T3.1 no JS frame ticks: no requestAnimationFrame, no per-frame JS loop in the layer
+  ok  T3.2 every new Animated.timing uses the native driver
+  ok  T3.3 layering order (outer → inner): weight translate → rotations → mood scale → breath scale
+  ok  T3.4 existing mood transforms unchanged: bob -5/-7/-18, tilt ±4, squash 1.12 stay as they were
+  ok  T3.5 one animated value per motion source — each perpetual value appears exactly once per transform array
+
+T4  AC3 — Reduce Motion: full static transforms, bounded swaps still play
+  ok  T4.1 breath never starts under RM and pins to rest exactly (scale 1)
+  ok  T4.2 sway/weight never start under RM and reset to rest on any exit (A13, A15)
+  ok  T4.3 RM effect re-runs when the OS flag flips (cleanup pins rest mid-loop)
+  ok  T4.4 bounded swaps still play under RM: scheduler and walk playback stay RM-free
+
+T5  A15 — mood exit resets; re-renders never restart a loop
+  ok  T5.1 the original mood-drivers effect and its deps line are untouched
+  ok  T5.2 loops are keyed on mood/RM/size and refs only — never restart on an unrelated re-render
+
+22 passed, 0 failed

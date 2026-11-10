@@ -1,0 +1,25 @@
+
+T1  A1/A2 — breath curve vs spec (composed from parsed legs)
+  ok  T1.1 three legs parsed: max leg, min leg, rest leg
+  ok  T1.2 spec numbers: period 2200 ± 20, bounds [0.995, 1.015] (A1)
+  ok  T1.3 sampled curve stays in [0.995, 1.015] and visits both extremes (A1)
+  ok  T1.4 volume preserved at EVERY 5 ms sample: |scaleX·scaleY − 1| ≤ 0.0005 (A2)
+      info: leg-boundary velocity gaps — extremes ≈ 6.73e-8 (F1 cusps closed), rest seam ≈ 2.86e-5 (rest-anchored quarter/half/quarter sweep)
+
+T2  A3/A4/A5 — sway + drift + weight constants and bounds vs spec
+  ok  T2.1 sway legs compose to 3400 ms; base amplitude 0.6° (A3/loops table)
+  ok  T2.2 composed rotation bound: SWAY_DEG + SWAY_DRIFT_DEG ≤ 0.9° (A3)
+  ok  T2.3 drift: ±0.25° target, 2 s cubic inOut glide, retarget cadence 5–9 s (A4)
+  ok  T2.4 weight shift: 4–7 s cadence, 550 ms move, tilt sign follows slot, slot never repeats (A5)
+
+T3  A12 — never-static: worst 3 s idle window (composed curve, drift at 0)
+      worst 3 s window: 29/30 samples deviating
+  ok  T3.1 every 3 s window has ≥2 of 30 samples deviating ≥0.2% scaleY or ≥0.1° (A12)
+
+T4  A13 — Reduce Motion fallback (source rung) + T5 A15 rest reset
+  ok  T4.1 breath effect gates on reduceMotion before anything starts; cleanup pins scale exactly 1
+  ok  T4.2 idle effect gates on mood+reduceMotion; cleanup pins sway/drift/weight to exact 0
+  ok  T4.3 both effects re-run when the OS flag flips (reduceMotion in deps)
+  ok  T4.4 bounded swaps still play under RM: scheduler and walk playback are RM-free
+
+13 passed, 0 failed

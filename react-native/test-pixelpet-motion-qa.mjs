@@ -15,8 +15,12 @@
 //
 // Easing math ported verbatim from react-native@0.88.1
 // Libraries/Animated/Easing.js (sin = 1 - cos(pi*t/2), i.e. easeInSine;
-// inOut(e) = t<0.5 ? e(2t)/2 : 1 - e(2-2t)/2; cubic = t^3). RN's
-// TimingAnimation evaluates from + (to - from) * easing(elapsed/duration).
+// out(e) = 1 - e(1-t); inOut(e) = t<0.5 ? e(2t)/2 : 1 - e(2-2t)/2; cubic = t^3).
+// R3 (PR #25 review): the oracle ports the per-leg sine combinations the source
+// uses since the R1 rebuild — out(sin), inOut(sin), bare sin — so T1/T3 sample
+// the corrected curve against the spec oracle. Closed forms:
+// out(sin)(t) = 1 - sin(1-t) = cos((1-t)·pi/2); inOut(sin)(t) = (1 - cos(pi·t))/2.
+// RN's TimingAnimation evaluates from + (to - from) * easing(elapsed/duration).
 
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -46,8 +50,14 @@ function check(name, fn) {
 // --- RN easing (verbatim port, react-native@0.88.1 Easing.js) -------------------
 const sin = (t) => 1 - Math.cos((t * Math.PI) / 2);
 const cubic = (t) => t * t * t;
+const out = (e) => (t) => 1 - e(1 - t);
 const inOut = (e) => (t) => (t < 0.5 ? e(t * 2) / 2 : 1 - e((1 - t) * 2) / 2);
-const EASINGS = { sin, 'inOut(cubic)': inOut(cubic) };
+const EASINGS = {
+  sin,
+  'out(sin)': out(sin),
+  'inOut(sin)': inOut(sin),
+  'inOut(cubic)': inOut(cubic),
+};
 
 // --- parse the perpetual constants + legs out of the source ---------------------
 function constNum(name) {
@@ -90,7 +100,7 @@ function evalExpr(expr, consts) {
   throw new Error(`cannot eval leg expression: ${expr}`);
 }
 function evalEasing(name) {
-  const e = name.trim().replace(/^Easing\./, '');
+  const e = name.trim().replace(/Easing\./g, '');
   if (EASINGS[e]) return EASINGS[e];
   throw new Error(`easing not modeled: ${name}`);
 }
@@ -182,10 +192,10 @@ console.log('\nT1  A1/A2 — breath curve vs spec (composed from parsed legs)');
     }
     assert.ok(worst <= SPEC.volumeTol, `worst ${worst.toExponential(3)} at scaleY=${worstAt.toFixed(4)} (tol ${SPEC.volumeTol})`);
   });
-  // informational: curve shape vs the spec's true-sine reference (preview.html
-  // Duck.prototype.tick: mid + amp * sin(2*pi*t/period)). Per-leg easeInSine
-  // ends each leg at max velocity, so the composed curve has velocity cusps at
-  // the extremes. Reported for the QA report; bounds/period are unaffected.
+  // informational: velocity continuity of the composed curve (v1 finding F1,
+  // fixed by the R1 rebuild's per-leg sine ports). Reported for the QA report;
+  // bounds/period checks are unaffected. Gap = |exit velocity of one leg −
+  // entry velocity of the next|, finite-differenced at ±0.2% of the leg.
   const vel = (leg, from, atEnd) => {
     const to = evalExpr(leg.to, C);
     const dur = evalExpr(leg.duration, C);
@@ -195,12 +205,16 @@ console.log('\nT1  A1/A2 — breath curve vs spec (composed from parsed legs)');
     return Math.abs(v(atEnd ? 1 - eps : eps) - v(atEnd ? 1 : 0)) / (eps * dur);
   };
   let prevEnd = 1;
-  let cusp = 0;
+  let prevExit = null;
+  const gaps = [];
   for (const leg of breathLegs) {
-    cusp = Math.max(cusp, vel(leg, prevEnd, true));
+    if (prevExit !== null) gaps.push(Math.abs(vel(leg, prevEnd, false) - prevExit));
+    prevExit = vel(leg, prevEnd, true);
     prevEnd = evalExpr(leg.to, C);
   }
-  console.log(`      info: max leg-exit velocity ≈ ${cusp.toExponential(2)} scaleY/ms (true sine exits legs at ~0 — see QA report finding F1)`);
+  const seamGap = Math.abs(vel(breathLegs[0], 1, false) - prevExit);
+  const worstExtreme = Math.max(...gaps);
+  console.log(`      info: leg-boundary velocity gaps — extremes ≈ ${worstExtreme.toExponential(2)} (F1 cusps closed), rest seam ≈ ${seamGap.toExponential(2)} (rest-anchored quarter/half/quarter sweep)`);
 }
 
 // ============================================================================
