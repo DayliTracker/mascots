@@ -1,0 +1,16 @@
+../../../../../../../tmp/tsc-bad.tsx(1,7): error TS2322: Type 'string' is not assignable to type 'number'.
+node_modules/@types/babel__core/index.d.ts(2,31): error TS2792: Cannot find module '@babel/parser'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
+node_modules/@types/babel__core/index.d.ts(5,20): error TS2792: Cannot find module '@babel/types'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
+node_modules/@types/babel__core/index.d.ts(10,52): error TS2792: Cannot find module '@babel/parser'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
+node_modules/@types/babel__generator/index.d.ts(1,20): error TS2792: Cannot find module '@babel/types'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
+node_modules/@types/babel__template/index.d.ts(1,31): error TS2792: Cannot find module '@babel/parser'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
+node_modules/@types/babel__template/index.d.ts(2,48): error TS2792: Cannot find module '@babel/types'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
+node_modules/@types/babel__traverse/index.d.ts(1,20): error TS2792: Cannot find module '@babel/types'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
+node_modules/@types/babel__traverse/index.d.ts(361,28): error TS2536: Type '"type"' cannot be used to index type 'T'.
+node_modules/@types/node/http.d.ts(2206,36): error TS2792: Cannot find module 'undici-types'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
+node_modules/@types/node/http.d.ts(2210,37): error TS2792: Cannot find module 'undici-types'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
+node_modules/@types/node/http.d.ts(2214,39): error TS2792: Cannot find module 'undici-types'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
+node_modules/@types/node/web-globals/fetch.d.ts(3,25): error TS2792: Cannot find module 'undici-types'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
+node_modules/@types/node/worker_threads.d.ts(16,34): error TS2792: Cannot find module 'undici-types'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
+node_modules/@types/react/index.d.ts(7,22): error TS2792: Cannot find module 'csstype'. Did you mean to set the 'moduleResolution' option to 'nodenext', or to add aliases to the 'paths' option?
+tsc exited non-zero as expected

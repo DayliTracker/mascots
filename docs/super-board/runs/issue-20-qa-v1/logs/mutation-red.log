@@ -1,0 +1,36 @@
+
+T1  AC1 — v1 manifest contract unchanged
+  ok  T1.1 PixelPetFrames keeps the 7 camelCased engine frame names in order
+  ok  T1.2 cycles prop is optional (v1 packs omit it)
+  ok  T1.3 no `cycles` → walk stays the unchanged 180 ms two-frame swap
+  ok  T1.4 v1 render path unchanged: falls back to frames[frame]
+  ok  T1.5 app-integration.md v1 wiring untouched by this PR (additions-only diff)
+
+T2  AC2 — manifest v2 walk cycle at manifest fps
+  ok  T2.1 step interval is derived from the manifest fps with a 16 ms floor
+  ok  T2.2 step arithmetic: 10 fps → 100 ms, 1 fps → 1000 ms, 0 fps → 1000 ms, 100 fps → 16 ms
+  ok  T2.3 walk entry resets the cycle to frame 0 and wraps modulo frame count
+  ok  T2.4 per-state render gate: cycle plays only in walk, not poked, with frames present
+  ok  T2.5 interval reads the latest cycle (inline `cycles` objects do not restart playback)
+
+T3  AC3 — behavior scheduler vs adopted motion spec #17 + Reduce Motion
+FAIL  T3.1 blink: gap U[2600, 4800] ms, hold 140 ms
+      Expected values to be strictly equal:
+
+'141' !== '140'
+
+  ok  T3.2 look: gap U[6000, 10000] ms, hold U[600, 900] ms
+  ok  T3.3 foot shuffle: p=0.35 after each look, delay U[1200, 4000], walk_a/b/a @ 300 ms, cooldown 8 s
+  ok  T3.4 randomization draws every gap/hold from the U ranges
+  ok  T3.5 behaviors are mutually exclusive — a timer firing mid-behavior re-rolls
+  ok  T3.6 idle behaviors are cleaned up on mood exit (no leaking timers)
+  ok  T3.7 Reduce Motion: transform loops freeze at rest
+  ok  T3.8 Reduce Motion: bounded frame swaps still play (scheduler has no RM guard)
+  ok  T3.9 Reduce Motion: poke gives opacity-only heart, no punch spring
+  ok  T3.10 Reduce Motion: sparkles twinkle in place (no drift/rise transforms)
+
+19 passed, 1 failed
+- T3.1 blink: gap U[2600, 4800] ms, hold 140 ms: Expected values to be strictly equal:
+
+'141' !== '140'
+
