@@ -88,14 +88,17 @@ check('T1.1 spec constants: breath 2200 ms over [0.995, 1.015]', () => {
   assert.equal(constLiteral('BREATH_MAX'), '1.015');
 });
 
-check('T1.2 breath loop legs are exact sine: quarter + half + quarter = 2200 ms', () => {
-  // RN's Easing.sin IS the sinusoidal ease-in-out, (1 - cos(pi*t)) / 2
+check('T1.2 breath legs port the sine slice-by-slice: quarter + half + quarter = 2200 ms', () => {
+  // RN's Easing.sin is easeInSine, 1 - Math.cos((t * Math.PI) / 2): leg 1
+  // wraps it in out() to decelerate into the peak, leg 2 in inOut() for zero
+  // velocity at both extremes, leg 3 stays bare sin so the min→rest climb
+  // accelerates into the next loop's fast start.
   assert.match(
     breathEffect,
-    /Animated\.loop\(\s*\n\s*Animated\.sequence\(\[\s*\n\s*Animated\.timing\(breathY, \{\s*\n\s*toValue: BREATH_MAX,\s*\n\s*duration: BREATH_PERIOD_MS \/ 4,\s*\n\s*easing: Easing\.sin,/
+    /Animated\.loop\(\s*\n\s*Animated\.sequence\(\[\s*\n\s*Animated\.timing\(breathY, \{\s*\n\s*toValue: BREATH_MAX,\s*\n\s*duration: BREATH_PERIOD_MS \/ 4,\s*\n\s*easing: Easing\.out\(Easing\.sin\),/
   );
-  assert.match(breathEffect, /toValue: BREATH_MIN,\s*\n\s*duration: BREATH_PERIOD_MS \/ 2,/);
-  assert.match(breathEffect, /toValue: 1,\s*\n\s*duration: BREATH_PERIOD_MS \/ 4,/);
+  assert.match(breathEffect, /toValue: BREATH_MIN,\s*\n\s*duration: BREATH_PERIOD_MS \/ 2,\s*\n\s*easing: Easing\.inOut\(Easing\.sin\),/);
+  assert.match(breathEffect, /toValue: 1,\s*\n\s*duration: BREATH_PERIOD_MS \/ 4,\s*\n\s*easing: Easing\.sin,/);
   // (0.995 + 1.015) / 2 = 1.005 mid per spec — the sine sweeps symmetric bounds
   assert.equal((0.995 + 1.015) / 2, 1.005);
 });
@@ -148,10 +151,10 @@ check('T2.1 sway constants: 3400 ms, ±0.6° base, drift ±0.25° gliding 2 s on
   assert.equal(constLiteral('SWAY_DRIFT_RANGE_MS'), '[5000, 9000]');
 });
 
-check('T2.2 sway loop is sine 0 → +0.6 → −0.6 → 0 (quarter/half/quarter = 3400 ms)', () => {
-  assert.match(idleEffect, /Animated\.timing\(sway, \{\s*\n\s*toValue: SWAY_DEG,\s*\n\s*duration: SWAY_PERIOD_MS \/ 4,\s*\n\s*easing: Easing\.sin,/);
-  assert.match(idleEffect, /toValue: -SWAY_DEG,\s*\n\s*duration: SWAY_PERIOD_MS \/ 2,/);
-  assert.match(idleEffect, /toValue: 0,\s*\n\s*duration: SWAY_PERIOD_MS \/ 4,/);
+check('T2.2 sway loop is sine 0 → +0.6 → −0.6 → 0, ported per leg (quarter/half/quarter = 3400 ms)', () => {
+  assert.match(idleEffect, /Animated\.timing\(sway, \{\s*\n\s*toValue: SWAY_DEG,\s*\n\s*duration: SWAY_PERIOD_MS \/ 4,\s*\n\s*easing: Easing\.out\(Easing\.sin\),/);
+  assert.match(idleEffect, /toValue: -SWAY_DEG,\s*\n\s*duration: SWAY_PERIOD_MS \/ 2,\s*\n\s*easing: Easing\.inOut\(Easing\.sin\),/);
+  assert.match(idleEffect, /toValue: 0,\s*\n\s*duration: SWAY_PERIOD_MS \/ 4,\s*\n\s*easing: Easing\.sin,/);
 });
 
 check('T2.3 drift is not a pure sine: cubic-glide retargets chained on a 5–9 s timer (A4)', () => {

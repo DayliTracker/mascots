@@ -392,9 +392,13 @@ export default function PixelPet({
 
   // --- perpetual layer (motion spec #17: breath · sway · weight shift) ---------
 
-  // Breath is an exact sine (quarter + half + quarter legs; RN's Easing.sin is
-  // the sinusoidal ease-in-out) sweeping [0.995, 1.015] around mid 1.005 over
-  // 2200 ms. It runs in every mood — the spec suspends only sway and weight
+  // Breath is an exact sine sweep (quarter + half + quarter legs) over
+  // [0.995, 1.015] around mid 1.005 across 2200 ms. RN's Easing.sin is
+  // easeInSine (1 - Math.cos((t * Math.PI) / 2)), so each leg ports its slice
+  // of the sine directly: out(sin) decelerates rest→max, inOut(sin) glides
+  // max→min with zero velocity at both extremes, sin accelerates min→rest —
+  // velocity stays continuous at every leg boundary and the loop seam.
+  // It runs in every mood — the spec suspends only sway and weight
   // during walk. Each mood exit resets it to rest (1) and restarts the loop;
   // it never freezes mid-flight. The value holds scaleY itself, so rest reads
   // exactly scale 1 under RM.
@@ -405,13 +409,13 @@ export default function PixelPet({
         Animated.timing(breathY, {
           toValue: BREATH_MAX,
           duration: BREATH_PERIOD_MS / 4,
-          easing: Easing.sin,
+          easing: Easing.out(Easing.sin),
           useNativeDriver: true,
         }),
         Animated.timing(breathY, {
           toValue: BREATH_MIN,
           duration: BREATH_PERIOD_MS / 2,
-          easing: Easing.sin,
+          easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
         }),
         Animated.timing(breathY, {
@@ -438,19 +442,21 @@ export default function PixelPet({
     if (mood !== 'idle' || reduceMotion) return;
     const rand = ([lo, hi]: [number, number]) => lo + Math.random() * (hi - lo);
 
-    // ±0.6° sine base, 3400 ms, seamless (ends where it starts).
+    // ±0.6° sine base, 3400 ms, seamless (ends where it starts). Per-leg
+    // sine port as in breath: out(sin) → inOut(sin) → sin keeps velocity
+    // continuous at each boundary.
     const swayLoop = Animated.loop(
       Animated.sequence([
         Animated.timing(sway, {
           toValue: SWAY_DEG,
           duration: SWAY_PERIOD_MS / 4,
-          easing: Easing.sin,
+          easing: Easing.out(Easing.sin),
           useNativeDriver: true,
         }),
         Animated.timing(sway, {
           toValue: -SWAY_DEG,
           duration: SWAY_PERIOD_MS / 2,
-          easing: Easing.sin,
+          easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
         }),
         Animated.timing(sway, {
