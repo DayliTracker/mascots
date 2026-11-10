@@ -392,12 +392,17 @@ export default function PixelPet({
 
   // --- perpetual layer (motion spec #17: breath · sway · weight shift) ---------
 
-  // Breath is an exact sine sweep (quarter + half + quarter legs) over
-  // [0.995, 1.015] around mid 1.005 across 2200 ms. RN's Easing.sin is
-  // easeInSine (1 - Math.cos((t * Math.PI) / 2)), so each leg ports its slice
-  // of the sine directly: out(sin) decelerates rest→max, inOut(sin) glides
-  // max→min with zero velocity at both extremes, sin accelerates min→rest —
-  // velocity stays continuous at every leg boundary and the loop seam.
+  // Breath is an exact sine sweep per leg (quarter + half + quarter legs) over
+  // [0.995, 1.015] across 2200 ms, anchored at rest 1 — not bounds-mid 1.005 —
+  // because A13/A15 want an exact-rest reset, and a mid anchor would transient
+  // for a cycle after every mood exit. RN's Easing.sin is easeInSine
+  // (1 - Math.cos((t * Math.PI) / 2)), so each leg ports its sine slice
+  // directly: out(sin) decelerates rest→max, inOut(sin) glides max→min with
+  // zero velocity at both extremes, sin accelerates min→rest. Velocity is
+  // continuous at both in-loop leg boundaries (extremes, 0↔0), but not at the
+  // loop seam: the legs span unequal deltas (0.005 vs 0.015 over 550 ms), so
+  // the crossing slopes differ 3× — a ~2.86e-5 scaleY/ms gap inherent to the
+  // rest anchor (the QA sampler measures it; bounds, A2 volume, A12 hold).
   // It runs in every mood — the spec suspends only sway and weight
   // during walk. Each mood exit resets it to rest (1) and restarts the loop;
   // it never freezes mid-flight. The value holds scaleY itself, so rest reads
