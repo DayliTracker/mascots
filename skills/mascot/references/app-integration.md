@@ -73,6 +73,11 @@ const cycles: PixelPetCycles = {
 - Idle behaviors are scheduler-driven with randomized timing (blink, look,
   foot shuffle) and Reduce Motion freezes transforms while frame swaps keep
   playing — the mascot stays alive without continuous motion.
+- A perpetual motion layer (spec #17) keeps the pet never static: breathing
+  scale runs in every mood; micro-sway and weight shift run while idle. All
+  loops are native `Animated` — no props, no consumer changes, no JS frame
+  ticks. Under Reduce Motion every transform holds at rest and only the
+  bounded frame swaps play.
 
 
 ## Pet registry + character switcher

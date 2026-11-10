@@ -1,0 +1,40 @@
+
+A  idle · RM off — A1/A2/A3/A4/A5/A12 + loop repetition (12 s @ 100 ms)
+  ok  A.0 identity: mount-batch values behave exactly as their names say
+  ok  A1 breath bounds: every sample in [0.995, 1.015]
+  ok  A1 breath amplitude reached: visits ≥1.014 and ≤0.996 within 12 s
+      breath periods (fine): 2200.0, 2200.0 ms
+  ok  A1 breath measured period 2200 ms ± 20, ≥3 periods (frame-step fine sampling)
+  ok  A1 coarse-grid consistency: 100 ms sampling puts the period within ±120 ms
+      worst |sx·sy−1| = 5.516e-5 over 120 samples
+  ok  A2 volume preserved: |scaleX·scaleY − 1| ≤ 0.0005 at every sample
+      worst |sway+drift| = 0.7990°
+  ok  A3 composed sway bound: |sway + drift| ≤ 0.9° at every sample
+      sway periods: 3400, 3400 ms
+  ok  A1 sway loop period 3400 ms ± 20, ≥2 periods (upward zero-crossings)
+      drift retargets at: 7300 ms
+  ok  A4 drift glides: first retarget in 5–9 s, subsequent intervals in 5–9 s
+      weight moves at: 7000 ms
+  ok  A5 weight shift: first move in 4–7 s, intervals in 4–7 s, settle ≤ 600 ms, slots ⊂ {−2.5,0,2.5}, next slot differs, tilt sign follows
+      worst 3 s window: 28/30 samples deviating
+  ok  A12 never-static: in EVERY 3 s window ≥ 2 of 30 samples deviate (|Δsy|≥0.002 or |rot|≥0.1°)
+  ok  AC2 runtime: all six animated values were driven by started Animated timings
+
+B  idle · RM on — A13 fallback: transforms exactly at rest, swaps still play
+  ok  A13 every sampled value is exactly 0 or 1 at every sample over 12 s
+  ok  A13 no Animated start after the RM flag resolved (transient pre-read pass allowed)
+      blinks+looks: 8 frame changes · blink at 3900 ms, hold 140 ms
+  ok  A13 bounded swaps still play: first blink within [2600, 4800] ms, hold 140 ms ± 10, restores idle
+
+C  transitions — A15 mood exit resets mid-flight values; A13 RM flip mid-loop
+  ok  C.pre ≥2 perpetual values are mid-flight (away from rest) at t=1100 ms
+      bobY mid-flight -5.000 → -1.330 (walk bob restarted from rest)
+  ok  A15 mood exit: every perpetual value reads EXACTLY rest within one frame (never frozen mid-flight)
+  ok  AC1 breath continues during walk (visits both halves of its range)
+  ok  AC1 sway + drift + weight stay suspended (exactly 0) during walk; walk bob animates
+  ok  A15/idle restart: sway loop running again after returning to idle
+  ok  A13 RM flip mid-loop: every value pinned EXACTLY to rest within one frame
+  ok  A13 RM flip: values stay exactly at rest for 3 s; no new Animated starts after the flip
+series dumped to /tmp/rnqa21/series.json
+
+22 passed, 0 failed
