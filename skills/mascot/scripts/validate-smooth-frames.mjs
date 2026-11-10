@@ -23,7 +23,22 @@ import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { renderPack, renderSvg, rasterizerVersion } from './smooth-engine.mjs';
+import {
+  renderPack,
+  renderSvg,
+  rasterizerVersion,
+  TWEENS,
+  cycleSampleName,
+} from './smooth-engine.mjs';
+
+// Cycle adjacent-frame registration (contract #18): consecutive cycle samples
+// (including last→first) must differ by at least MIN pixels (a visible
+// in-between, not a duplicate) and at most RATIO × the base frame's opaque
+// pixels (a small delta, not a keyframe jump). Calibrated on smooth-duck's
+// walk cycle: adjacent deltas measure 830–1466 px against a base frame of
+// 83,078 opaque px (max 12,461) — far inside both bounds.
+const MIN_CYCLE_DELTA = 50;
+const MAX_CYCLE_DELTA_RATIO = 0.15;
 
 // PNG reader: 8-bit RGBA, non-interlaced, all five scanline filters. Reads
 // files this pipeline wrote (resvg) and any conforming RGBA PNG.
@@ -97,11 +112,20 @@ async function main() {
   const packDir = dirname(resolve(packPath));
   let outDir = outIdx >= 0 ? resolve(args[outIdx + 1]) : packDir;
   const frameNames = Object.keys(pack.frames);
-  const expected = [
-    ...frameNames.map((f) => `${pack.name}_${f}.png`),
-    'contact_sheet.png',
-    'manifest.json',
-  ];
+  const frameFiles = frameNames.map((f) => `${pack.name}_${f}.png`);
+  // Cycles (contract #18): schema is checked in its own section below; the
+  // sample file list here drives files/manifest/alpha/registration/determinism.
+  const cycles = pack.cycles ?? {};
+  const hasCycles = Object.keys(cycles).length > 0;
+  const cycleFiles = {}; // cycle name -> [file, ...] in engine order
+  for (const [name, c] of Object.entries(cycles)) {
+    cycleFiles[name] = Array.from(
+      { length: (c.keys?.length ?? 0) * (c.steps ?? 0) },
+      (_, i) => `${pack.name}_${cycleSampleName(name, i)}.png`
+    );
+  }
+  const allPngs = [...frameFiles, ...Object.values(cycleFiles).flat()];
+  const expected = [...allPngs, 'contact_sheet.png', 'manifest.json'];
 
   let renderTmp = null;
   if (outIdx < 0 && !expected.some((f) => existsSync(join(packDir, f)))) {
@@ -118,6 +142,29 @@ async function main() {
     console.log(`  ✗ ${msg}`);
   };
 
+  console.log('cycles (schema)');
+  for (const [name, c] of Object.entries(cycles)) {
+    const where = `cycle ${name}`;
+    if (!Number.isInteger(c.fps) || c.fps < 1 || c.fps > 30) {
+      fail(`${where}: fps ${JSON.stringify(c.fps)}, expected integer 1..30`);
+    } else ok(`${where}: fps ${c.fps}`);
+    if (
+      !Array.isArray(c.keys) ||
+      c.keys.length < 2 ||
+      !c.keys.every((k) => k && typeof k === 'object')
+    ) {
+      fail(`${where}: keys ${JSON.stringify(c.keys)}, expected >= 2 param objects`);
+    } else ok(`${where}: ${c.keys.length} keys`);
+    if (!Number.isInteger(c.steps) || c.steps < 1) {
+      fail(`${where}: steps ${JSON.stringify(c.steps)}, expected integer >= 1`);
+    } else ok(`${where}: steps ${c.steps}`);
+    const tween = c.tween ?? 'linear';
+    if (!(tween in TWEENS)) {
+      fail(`${where}: tween '${tween}' not in the engine table (${Object.keys(TWEENS).join(', ')})`);
+    } else ok(`${where}: tween ${tween}`);
+  }
+  if (!hasCycles) ok('none declared — manifest must stay v1');
+
   console.log('files');
   for (const f of expected) {
     existsSync(join(outDir, f)) ? ok(f) : fail(`missing ${f}`);
@@ -129,7 +176,6 @@ async function main() {
   if (existsSync(manifestPath)) {
     try {
       manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-      const frameFiles = frameNames.map((f) => `${pack.name}_${f}.png`);
       const gotFiles = (manifest.frames ?? []).map((fr) => fr.file);
       if (manifest.pack !== pack.name) fail(`manifest pack: ${manifest.pack}, expected ${pack.name}`);
       else ok(`pack: ${manifest.pack}`);
@@ -143,6 +189,30 @@ async function main() {
       if (manifest.rasterizer?.name !== '@resvg/resvg-js' || gotVersion !== wantVersion) {
         fail(`manifest rasterizer: ${manifest.rasterizer?.name}@${gotVersion}, expected @resvg/resvg-js@${wantVersion}`);
       } else ok(`rasterizer: @resvg/resvg-js@${gotVersion} (pinned)`);
+      // Manifest v2 (contract #18): `cycles` + `version` only when the pack
+      // declares cycles; cycle frames never enter `frames` (enforced above by
+      // the exact-match check, which allows exactly the canonical frames).
+      if (hasCycles) {
+        if (manifest.version !== 2) {
+          fail(`manifest version: ${JSON.stringify(manifest.version)}, expected 2 when cycles are declared`);
+        } else ok('version: 2 (v2 with cycles)');
+        for (const [name, files] of Object.entries(cycleFiles)) {
+          const mc = manifest.cycles?.[name];
+          if (!mc) {
+            fail(`manifest cycles.${name} missing`);
+            continue;
+          }
+          if (mc.fps !== cycles[name].fps) {
+            fail(`manifest cycles.${name}.fps ${JSON.stringify(mc.fps)}, expected ${cycles[name].fps}`);
+          } else ok(`cycles.${name}: fps ${mc.fps}`);
+          const gotCycleFiles = (mc.frames ?? []).map((fr) => fr.file);
+          if (JSON.stringify(gotCycleFiles) !== JSON.stringify(files)) {
+            fail(`manifest cycles.${name} frames ${JSON.stringify(gotCycleFiles)} do not match engine order ${JSON.stringify(files)}`);
+          } else ok(`cycles.${name}: ${files.length} frames in engine order`);
+        }
+      } else if (manifest.cycles !== undefined || manifest.version !== undefined) {
+        fail('pack declares no cycles but manifest carries cycles/version — v1 must stay v1');
+      } else ok('v1 manifest (no cycles/version keys)');
     } catch (e) {
       fail(`manifest.json unreadable (${e.message})`);
     }
@@ -150,10 +220,13 @@ async function main() {
 
   console.log('dimensions + alpha outside silhouette');
   // The pack's union silhouette, rendered at canvas size — the alpha gate.
+  // Cycle frames sit inside it too: the silhouette must sweep the whole
+  // interpolated pose range (contract #18), so a mid-phase pose poking out
+  // fails here.
   const mask = decodePNG(renderSvg(pack.silhouette(), pack).png);
-  const frameFiles = frameNames.map((f) => `${pack.name}_${f}.png`);
   const decoded = {};
-  for (const f of frameFiles) {
+  const opaqueCounts = {};
+  for (const f of allPngs) {
     const path = join(outDir, f);
     if (!existsSync(path)) continue;
     let img;
@@ -185,6 +258,7 @@ async function main() {
     if (opaque < want * want * 0.05) fail(`${f}: silhouette too small (${opaque} px)`);
     else if (outside > 0) fail(`${f}: ${outside} opaque pixels outside the silhouette`);
     else ok(`${f}: alpha inside silhouette (${opaque} opaque px)`);
+    opaqueCounts[f] = opaque;
   }
 
   console.log('registration (frames differ from the base frame)');
@@ -209,6 +283,42 @@ async function main() {
         fail(`${f}: only ${differing} px differ from ${baseFile} — no animation change?`);
       } else {
         ok(`${f}: ${differing} px differ from ${baseFile}`);
+      }
+    }
+  }
+
+  // Cycle frames replace the base-frame rule with adjacent-pair registration
+  // (contract #18): each consecutive sample — including last→first — must be
+  // a visible but small step, proving order and tween coverage.
+  if (hasCycles) {
+    console.log('registration (cycle samples move smoothly around the loop)');
+    const baseOpaque = opaqueCounts[baseFile];
+    const maxDelta = baseOpaque == null ? null : Math.floor(baseOpaque * MAX_CYCLE_DELTA_RATIO);
+    for (const [name, files] of Object.entries(cycleFiles)) {
+      const imgs = files.map((f) => decoded[f]);
+      if (imgs.some((img) => !img)) continue; // missing/unreadable files already failed above
+      for (let i = 0; i < imgs.length; i++) {
+        const a = imgs[i];
+        const b = imgs[(i + 1) % imgs.length];
+        let differing = 0;
+        for (let p = 0; p < a.pixels.length; p += 4) {
+          if (
+            a.pixels[p] !== b.pixels[p] ||
+            a.pixels[p + 1] !== b.pixels[p + 1] ||
+            a.pixels[p + 2] !== b.pixels[p + 2] ||
+            a.pixels[p + 3] !== b.pixels[p + 3]
+          ) {
+            differing++;
+          }
+        }
+        const label = `cycles.${name} ${String(i).padStart(3, '0')}→${String((i + 1) % imgs.length).padStart(3, '0')}${i === imgs.length - 1 ? ' (wrap)' : ''}`;
+        if (differing < MIN_CYCLE_DELTA) {
+          fail(`${label}: only ${differing} px differ — not a visible in-between`);
+        } else if (maxDelta != null && differing > maxDelta) {
+          fail(`${label}: ${differing} px differ — keyframe jump, not a tween step (max ${maxDelta})`);
+        } else {
+          ok(`${label}: ${differing} px`);
+        }
       }
     }
   }
