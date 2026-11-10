@@ -1,0 +1,26 @@
+cycle keyframe interpolation (K=2, S=4)
+  ✓ samples 0..7 sweep the stride and wrap without repeating the first pose
+non-numeric opts hold from the left key
+  ✓ strings hold, numbers lerp
+engine: smooth-duck renders 17 files, two runs byte-identical
+  ✓ cycle pack file count (7 frames + 8 walk + sheet + manifest)
+  ✓ two renders reproduce every file byte-for-byte
+manifest v2: cycles + version only when cycles are declared
+  ✓ version: 2
+  ✓ cycles.walk.fps: 10
+  ✓ cycles.walk carries 8 frames
+  ✓ cycle files zero-padded `<name>_<cycle>_<iii>.png`
+  ✓ manifest.frames stays exactly the 7 canonical frames
+canonical bytes: cycles stripped ⇒ identical frames + sheet, v1 manifest
+  ✓ cycle-less render writes 9 files (v1)
+  ✓ all 7 canonical PNGs byte-identical with cycles stripped
+  ✓ contact sheet byte-identical with cycles stripped
+  ✓ cycle-less manifest stays v1 (no version/cycles keys)
+validator: pass, mutation gate, schema gate
+  ✓ validate-smooth-frames passes the cycle pack
+  ✓ mutated cycle frame fails validation
+  ✓ fps 0 fails the cycle schema gate
+bare fresh-render mode still passes (fresh-checkout contract)
+  ✓ bare validate-smooth-frames exits 0
+
+PASS — 17/17 checks

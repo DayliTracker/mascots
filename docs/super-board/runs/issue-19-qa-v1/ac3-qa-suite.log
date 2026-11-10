@@ -1,0 +1,14 @@
+engine: cycle pack renders with the AC1 numbers
+  ✓ walk cycle renders >= 8 frames (8)
+  ✓ walk cycle fps >= 8 (10)
+cycle keys land on the canonical walk geometry
+  ✓ smooth-duck_walk_000.png byte-identical to smooth-duck_walk_a.png
+  ✓ smooth-duck_walk_004.png byte-identical to smooth-duck_walk_b.png
+validator: wrap pair is exercised on the loop
+  ✓ validate-smooth-frames passes the cycle pack
+  ✓ adjacent check covers the last→first wrap pair
+validator fails on real-PNG cycle-frame mutations
+  ✓ mutated smooth-duck_walk_003.png rejected (keyframe jump)
+  ✓ mutated smooth-duck_walk_005.png rejected (duplicate frame)
+
+PASS — 8/8 checks
