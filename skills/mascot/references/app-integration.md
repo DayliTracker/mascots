@@ -37,6 +37,44 @@ import PixelPet, { PixelPetFrames, PixelPetParticles } from './components/PixelP
 - The pet is tappable — poke triggers the surprised frame + heart. Put it
   where a tap is welcome, and tell users to poke it once in the UI.
 
+## Manifest v2 cycle playback
+
+Smooth packs with tween cycles ship `cycles` in their manifest (`version: 2`).
+Pass it as the optional `cycles` prop and the walk mood plays the cycle at the
+manifest fps instead of the two-frame walk swap — v1 packs just omit `cycles`
+and behave exactly as before:
+
+```tsx
+import PixelPet, { PixelPetCycles } from './components/PixelPet';
+
+// Metro needs static require literals: enumerate the cycle PNGs, in manifest
+// `cycles.walk.frames[].file` order (smooth-duck: 8 frames, fps 10).
+const cycles: PixelPetCycles = {
+  walk: {
+    fps: 10,
+    frames: [
+      require('./assets/mascots/duck/duck_walk_000.png'),
+      require('./assets/mascots/duck/duck_walk_001.png'),
+      require('./assets/mascots/duck/duck_walk_002.png'),
+      require('./assets/mascots/duck/duck_walk_003.png'),
+      require('./assets/mascots/duck/duck_walk_004.png'),
+      require('./assets/mascots/duck/duck_walk_005.png'),
+      require('./assets/mascots/duck/duck_walk_006.png'),
+      require('./assets/mascots/duck/duck_walk_007.png'),
+    ],
+  },
+};
+
+<PixelPet frames={frames} particles={particles} cycles={cycles} progress={...} />
+```
+
+- The cycle always loops (`cycles.<name>.loop: true` in the manifest); the
+  component steps one frame per `1000 / fps` ms.
+- Idle behaviors are scheduler-driven with randomized timing (blink, look,
+  foot shuffle) and Reduce Motion freezes transforms while frame swaps keep
+  playing — the mascot stays alive without continuous motion.
+
+
 ## Pet registry + character switcher
 
 Keep one registry so the switcher is data-driven:
