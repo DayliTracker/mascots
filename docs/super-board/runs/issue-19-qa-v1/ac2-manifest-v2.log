@@ -1,0 +1,7 @@
+version: 2
+cycles keys: [ 'walk' ]
+cycles.walk.fps: 10
+cycles.walk.loop: true
+cycles.walk frames: 8 first: walk_000 last: smooth-duck_walk_007.png
+manifest.frames count: 7
+cycle leak into frames: false

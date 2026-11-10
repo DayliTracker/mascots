@@ -83,6 +83,15 @@ const FEET = {
   walkB: [footRect(198, 444), footRect(314, 462)],
 };
 
+// Walk in-betweens (contract #18): `feetPhase` ∈ [0, 1) sweeps one full
+// stride — 0 = walk_a pose, 0.5 = walk_b pose, 0.25/0.75 = pass positions.
+// The cosine hits the canonical walkA/walkB y values exactly at the keys, so
+// the cycle wraps cleanly onto the 7 canonical frames' geometry.
+function phaseFeet(p) {
+  const lift = Math.round(9 * Math.cos(2 * Math.PI * p));
+  return [footRect(198, 453 + lift), footRect(314, 453 - lift)];
+}
+
 const SCARF = {
   // Full-width smile-band snug under the bill (prototype: top y≈263 mid,
   // bottom y≈316 mid), drawn inside the body clip so it hugs the silhouette.
@@ -172,7 +181,12 @@ const EYES = {
 
 function frameSvg(o = {}) {
   const wings = o.wings ?? 'down';
-  const feet = FEET[o.feet ?? 'stand'];
+  // Interpolated cycles feed numeric params (feetPhase); canonical frames
+  // keep their named poses. walk_a/walk_b bytes are untouched by this branch.
+  const feet =
+    typeof o.feetPhase === 'number' && Number.isFinite(o.feetPhase)
+      ? phaseFeet(o.feetPhase)
+      : FEET[o.feet ?? 'stand'];
   const wing = (side) => {
     const path = wings === 'up' ? WING_OUT[side] : WING[side];
     return `<path d="${path}" fill="${C.bodyLo}"/>`;
@@ -257,6 +271,19 @@ export default {
     walk_b: { feet: 'walkB' },
     happy: { eyes: 'happy', beak: 'smile', wings: 'up' },
     surprised: { eyes: 'wide', beak: 'open' },
+  },
+
+  // Tween cycles (contract #18, research/tween-contract FINDINGS.md): 2 keys
+  // × 4 steps = 8 walk in-betweens per loop at 10 fps. keys[j]→keys[j+1]
+  // lerps the numeric feetPhase; the loop wraps keys[1]→keys[0] so the stride
+  // alternates left/right foot without duplicating the first/last pose.
+  cycles: {
+    walk: {
+      fps: 10,
+      keys: [{ feetPhase: 0 }, { feetPhase: 0.5 }],
+      steps: 4,
+      tween: 'linear',
+    },
   },
 
   // One frame's inner SVG, positioned in the pack's 512×512 user space.

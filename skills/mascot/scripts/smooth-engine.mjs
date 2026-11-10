@@ -16,6 +16,10 @@
 // keep font metrics out of the pipeline, so output is byte-for-byte identical
 // across machines for a given rasterizer version. Emits:
 //   <name>_<frame>.png · contact_sheet.png · manifest.json
+//   + <name>_<cycle>_<iii>.png when the pack declares cycles (contract #18):
+//     numeric cycle params are tweened between keyframes at build time and
+//     each sample renders as its own PNG; the manifest gains `cycles` +
+//     `version: 2` only then — packs without cycles stay byte-identical v1.
 //
 // Build-time only — this repo's dependency. Apps consume the PNG frames and
 // manifest.json; nothing here ships to a consuming app.
@@ -30,6 +34,37 @@ const require = createRequire(import.meta.url);
 
 export function rasterizerVersion() {
   return require('@resvg/resvg-js/package.json').version;
+}
+
+// Tween easing table (fixed): a cycle's local segment time eases through one
+// of these before the keyframe lerp. 'linear' is the default.
+export const TWEENS = {
+  linear: (t) => t,
+};
+
+// Cycle keyframe interpolation (contract #18): sample `i` of K keys × S steps
+// sits in segment j = floor(i/S); the eased local time lerps numeric params
+// between keys[j] and keys[(j+1) mod K]. Non-numeric opts hold from the left
+// key. Loop cycles never duplicate the first/last pose: i runs [0, K*S).
+export function cycleOpts(cycle, i) {
+  const keys = cycle.keys;
+  const S = cycle.steps;
+  const j = Math.floor(i / S);
+  const tween = TWEENS[cycle.tween ?? 'linear'] ?? TWEENS.linear;
+  const t = tween((i % S) / S);
+  const left = keys[j];
+  const right = keys[(j + 1) % keys.length];
+  const opts = {};
+  for (const [k, v] of Object.entries(left)) {
+    opts[k] =
+      typeof v === 'number' && typeof right[k] === 'number' ? v + (right[k] - v) * t : v;
+  }
+  return opts;
+}
+
+// Cycle sample naming: `<cycle>_<iii>` — zero-padded 3-digit index.
+export function cycleSampleName(cycleName, i) {
+  return `${cycleName}_${String(i).padStart(3, '0')}`;
 }
 
 // Render one full SVG document. Deterministic: fixed options, no fonts.
@@ -71,12 +106,15 @@ export function renderSheet(framesInner, pack) {
   return { png: Buffer.from(png.asPng()), width, height };
 }
 
-export function renderManifest(pack, frames, sheet) {
+export function renderManifest(pack, frames, sheet, cycles) {
   const manifest = {
     pack: pack.name,
     art: 'smooth',
     canvas: pack.size,
     frames, // [{ name, file, width, height }] in pack.frames key order
+    // Manifest v2 (contract #18): `cycles` + `version` appear only when the
+    // pack declares cycles — otherwise the manifest stays byte-identical v1.
+    ...(cycles && Object.keys(cycles).length > 0 ? { cycles, version: 2 } : {}),
     sheet: { file: 'contact_sheet.png', width: sheet.width, height: sheet.height },
     rasterizer: { name: '@resvg/resvg-js', version: rasterizerVersion() },
     generator: 'smooth-engine.mjs',
@@ -99,6 +137,24 @@ export async function renderPack(packPath, { out } = {}) {
     frames.push({ name: frameName, file: `${pack.name}_${frameName}.png`, width, height });
     written.push(file);
   }
+  // Cycles (contract #18): K keys × S steps samples per cycle, each rendered
+  // as `<name>_<cycle>_<iii>.png`. Cycle frames never enter `frames`.
+  const cycles = {};
+  for (const [cycleName, cycle] of Object.entries(pack.cycles ?? {})) {
+    const count = cycle.keys.length * cycle.steps;
+    const entries = [];
+    for (let i = 0; i < count; i++) {
+      const { png, width, height } = renderSvg(pack.frame(cycleOpts(cycle, i)), pack);
+      const name = cycleSampleName(cycleName, i);
+      const file = join(outDir, `${pack.name}_${name}.png`);
+      writeFileSync(file, png);
+      entries.push({ name, file: `${pack.name}_${name}.png`, width, height });
+      written.push(file);
+    }
+    cycles[cycleName] = { fps: cycle.fps, loop: true, frames: entries };
+  }
+  // Contact sheet stays canonical-frames only: the cycle-sheet evidence shape
+  // is an open question (FINDINGS #18, risk 4 — deferred to #16).
   const sheet = renderSheet(
     Object.entries(pack.frames).map(([, opts]) => pack.frame(opts ?? {})),
     pack
@@ -108,11 +164,11 @@ export async function renderPack(packPath, { out } = {}) {
   written.push(sheetFile);
 
   const manifestFile = join(outDir, 'manifest.json');
-  const manifest = renderManifest(pack, frames, sheet);
+  const manifest = renderManifest(pack, frames, sheet, cycles);
   writeFileSync(manifestFile, manifest);
   written.push(manifestFile);
 
-  return { pack, outDir, frames, written };
+  return { pack, outDir, frames, cycles, written };
 }
 
 // CLI entry: node smooth-engine.mjs <pack.mjs> [--out dir]

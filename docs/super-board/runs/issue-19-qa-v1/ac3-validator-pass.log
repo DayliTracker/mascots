@@ -1,0 +1,82 @@
+cycles (schema)
+  ✓ cycle walk: fps 10
+  ✓ cycle walk: 2 keys
+  ✓ cycle walk: steps 4
+  ✓ cycle walk: tween linear
+files
+  ✓ smooth-duck_idle.png
+  ✓ smooth-duck_blink.png
+  ✓ smooth-duck_look.png
+  ✓ smooth-duck_walk_a.png
+  ✓ smooth-duck_walk_b.png
+  ✓ smooth-duck_happy.png
+  ✓ smooth-duck_surprised.png
+  ✓ smooth-duck_walk_000.png
+  ✓ smooth-duck_walk_001.png
+  ✓ smooth-duck_walk_002.png
+  ✓ smooth-duck_walk_003.png
+  ✓ smooth-duck_walk_004.png
+  ✓ smooth-duck_walk_005.png
+  ✓ smooth-duck_walk_006.png
+  ✓ smooth-duck_walk_007.png
+  ✓ contact_sheet.png
+  ✓ manifest.json
+manifest
+  ✓ pack: smooth-duck
+  ✓ canvas: 512
+  ✓ frames: 7 in pack order
+  ✓ rasterizer: @resvg/resvg-js@2.6.2 (pinned)
+  ✓ version: 2 (v2 with cycles)
+  ✓ cycles.walk: fps 10
+  ✓ cycles.walk: 8 frames in engine order
+dimensions + alpha outside silhouette
+  ✓ smooth-duck_idle.png: 512x512
+  ✓ smooth-duck_idle.png: alpha inside silhouette (83078 opaque px)
+  ✓ smooth-duck_blink.png: 512x512
+  ✓ smooth-duck_blink.png: alpha inside silhouette (83078 opaque px)
+  ✓ smooth-duck_look.png: 512x512
+  ✓ smooth-duck_look.png: alpha inside silhouette (83078 opaque px)
+  ✓ smooth-duck_walk_a.png: 512x512
+  ✓ smooth-duck_walk_a.png: alpha inside silhouette (83025 opaque px)
+  ✓ smooth-duck_walk_b.png: 512x512
+  ✓ smooth-duck_walk_b.png: alpha inside silhouette (83025 opaque px)
+  ✓ smooth-duck_happy.png: 512x512
+  ✓ smooth-duck_happy.png: alpha inside silhouette (85272 opaque px)
+  ✓ smooth-duck_surprised.png: 512x512
+  ✓ smooth-duck_surprised.png: alpha inside silhouette (83078 opaque px)
+  ✓ smooth-duck_walk_000.png: 512x512
+  ✓ smooth-duck_walk_000.png: alpha inside silhouette (83025 opaque px)
+  ✓ smooth-duck_walk_001.png: 512x512
+  ✓ smooth-duck_walk_001.png: alpha inside silhouette (83069 opaque px)
+  ✓ smooth-duck_walk_002.png: 512x512
+  ✓ smooth-duck_walk_002.png: alpha inside silhouette (83078 opaque px)
+  ✓ smooth-duck_walk_003.png: 512x512
+  ✓ smooth-duck_walk_003.png: alpha inside silhouette (83069 opaque px)
+  ✓ smooth-duck_walk_004.png: 512x512
+  ✓ smooth-duck_walk_004.png: alpha inside silhouette (83025 opaque px)
+  ✓ smooth-duck_walk_005.png: 512x512
+  ✓ smooth-duck_walk_005.png: alpha inside silhouette (83069 opaque px)
+  ✓ smooth-duck_walk_006.png: 512x512
+  ✓ smooth-duck_walk_006.png: alpha inside silhouette (83078 opaque px)
+  ✓ smooth-duck_walk_007.png: 512x512
+  ✓ smooth-duck_walk_007.png: alpha inside silhouette (83069 opaque px)
+registration (frames differ from the base frame)
+  ✓ smooth-duck_blink.png: 1618 px differ from smooth-duck_idle.png
+  ✓ smooth-duck_look.png: 2314 px differ from smooth-duck_idle.png
+  ✓ smooth-duck_walk_a.png: 2507 px differ from smooth-duck_idle.png
+  ✓ smooth-duck_walk_b.png: 2507 px differ from smooth-duck_idle.png
+  ✓ smooth-duck_happy.png: 10949 px differ from smooth-duck_idle.png
+  ✓ smooth-duck_surprised.png: 5545 px differ from smooth-duck_idle.png
+registration (cycle samples move smoothly around the loop)
+  ✓ cycles.walk 000→001: 830 px
+  ✓ cycles.walk 001→002: 1466 px
+  ✓ cycles.walk 002→003: 1466 px
+  ✓ cycles.walk 003→004: 830 px
+  ✓ cycles.walk 004→005: 830 px
+  ✓ cycles.walk 005→006: 1466 px
+  ✓ cycles.walk 006→007: 1466 px
+  ✓ cycles.walk 007→000 (wrap): 830 px
+determinism (re-render byte-compare)
+  ✓ all files reproduce byte-for-byte
+
+PASS — 0 problem(s)
